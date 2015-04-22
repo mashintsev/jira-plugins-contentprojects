@@ -1,0 +1,46 @@
+.contentprojects-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    white-space: nowrap;
+    width: 100%;
+}
+
+th, td {
+    border-bottom: 1px solid #cccccc;
+    padding: 6px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    color: #707070;
+}
+
+th.sortable {
+    cursor: pointer;
+}
+
+th.sortable:hover,
+th.active {
+    background-color: #f5f5f5;
+}
+
+th.active.ascending span {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAAL0lEQVQYV2P4//8/AzIuLy9vAGF0cWyK/kMximJcijAU41OEopiQIrhi0t1If4UAykjoh8JG3G8AAAAASUVORK5CYII=") no-repeat 100% 2px;
+    padding-right: 12px;
+}
+
+th.active.descending span {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAJCAYAAAALpr0TAAAANElEQVQY02P4//8/AwyXl5c3APF/KG5AlmMYQIVokrhwAzaTMBShWI1DcQNlnkFS3IAuDgDKSOiHYDSrdgAAAABJRU5ErkJggg==") no-repeat 100% 2px;
+    padding-right: 12px;
+}
+
+tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.contentprojects-footer {
+    padding: 6px 10px 6px;
+}

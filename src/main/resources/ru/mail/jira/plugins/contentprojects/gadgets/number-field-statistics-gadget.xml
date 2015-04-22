@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="__MSG_ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.title__"
+                 description="__MSG_ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.description__"
+                 author="Andrey Molchanov"
+                 author_email="a.molchanov@corp.mail.ru"
+                 thumbnail='#staticResourceUrl("ru.mail.jira.plugins.contentprojects:number-field-statistics-resource", "number-field-statistics-gadget.png")'>
+        <Require feature="dynamic-height" />
+        <Optional feature="auth-refresh"/>
+        <Require feature="oauthpopup" />
+        <Require feature="setprefs" />
+        <Require feature="settitle" />
+        <Require feature="views" />
+        <Optional feature="atlassian.util" />
+        <Optional feature="gadget-directory">
+            <Param name="categories">Other</Param>
+        </Optional>
+        #oauth
+        #supportedLocales("gadget.common,gadget.issuetable.common,common.concepts,ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics")
+    </ModulePrefs>
+    <UserPref name="isConfigured" datatype="hidden" default_value="false" />
+    <UserPref name="projectOrFilterId" datatype="hidden" default_value="" />
+    <UserPref name="fieldIds" datatype="hidden" default_value="customfield_25114|customfield_25203|customfield_25204|customfield_25202|customfield_25200|customfield_25201|customfield_26208|customfield_25401" />
+    <UserPref name="groupFieldId" datatype="hidden" default_value="" />
+    <UserPref name="refresh" datatype="hidden" default_value="false" />
+    <Content type="html">
+        <![CDATA[
+            #requireResource("ru.mail.jira.plugins.contentprojects:number-field-statistics-resource")
+            #includeResources()
+        ]]>
+    </Content>
+</Module>

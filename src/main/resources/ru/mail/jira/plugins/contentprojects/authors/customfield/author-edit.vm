@@ -1,0 +1,10 @@
+#customControlHeader( $action $customField.id $customField.name $fieldLayoutItem.required $displayParameters $auiparams )
+<select class="contentprojects-author long-field" id="$customField.id" name="$customField.id" data-placeholder="$i18n.getText( "common.words.none" )">
+    <option value=""></option>
+    #foreach( $author in $customField.customFieldType.getAuthors( $value, $projectIdList ) )
+        <option value="$author.dbValue" data-caption="$author.shortCaption" data-avatar-url="$!author.getAvatarUrl( true )" #if( $value == $author.dbValue )selected="selected"#end>
+            $author.longCaption
+        </option>
+    #end
+</select>
+#customControlFooter( $action $customField.id $fieldLayoutItem.fieldDescription $displayParameters $auiparams )

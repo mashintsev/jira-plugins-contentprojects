@@ -1,0 +1,44 @@
+.contentprojects-google,
+.contentprojects-yandex,
+.contentprojects-others,
+.contentprojects-facebook,
+.contentprojects-mymail,
+.contentprojects-odnoklassniki,
+.contentprojects-twitter,
+.contentprojects-vkontakte {
+    background: no-repeat;
+    margin-right: 14px;
+    padding-left: 20px;
+}
+
+.contentprojects-google {
+    background-image: url("google.png");
+}
+
+.contentprojects-yandex {
+    background-image: url("yandex.png");
+}
+
+.contentprojects-others {
+    background-image: url("others.png");
+}
+
+.contentprojects-facebook {
+    background-image: url("facebook.png");
+}
+
+.contentprojects-mymail {
+    background-image: url("mymail.png");
+}
+
+.contentprojects-odnoklassniki {
+    background-image: url("odnoklassniki.png");
+}
+
+.contentprojects-twitter {
+    background-image: url("twitter.png");
+}
+
+.contentprojects-vkontakte {
+    background-image: url("vkontakte.png");
+}

@@ -1,0 +1,38 @@
+<ul class="item-details">
+    <li>
+        #foreach( $field in $fields )
+            #if( $field.statisticValue )
+                <dl data-selector="$!field.selector" data-greater="$!field.greater" data-better="$!field.better">
+                    <dt>$field.name:</dt>
+                    <dd>
+                        #if( $field.statisticValue.class.simpleName == "SearchEngines" )
+                            #set( $value = $field.statisticValue.total )
+                            #set( $google = $field.statisticValue.google )
+                            #set( $yandex = $field.statisticValue.yandex )
+                            #set( $others = $field.statisticValue.others )
+                            #set( $facebook = 0 )
+                            #set( $mymail = 0 )
+                            #set( $odnoklassniki = 0 )
+                            #set( $twitter = 0 )
+                            #set( $vkontakte = 0 )
+                            #parse( "/ru/mail/jira/plugins/contentprojects/issue/hit-sources-view.vm" )
+                        #elseif( $field.statisticValue.class.simpleName == "SocialMedia" )
+                            #set( $value = $field.statisticValue.total )
+                            #set( $google = 0 )
+                            #set( $yandex = 0 )
+                            #set( $others = 0 )
+                            #set( $facebook = $field.statisticValue.facebook )
+                            #set( $mymail = $field.statisticValue.mymail )
+                            #set( $odnoklassniki = $field.statisticValue.odnoklassniki )
+                            #set( $twitter = $field.statisticValue.twitter )
+                            #set( $vkontakte = $field.statisticValue.vkontakte )
+                            #parse( "/ru/mail/jira/plugins/contentprojects/issue/hit-sources-view.vm" )
+                        #else
+                            $numberTool.format( $field.statisticValue )
+                        #end
+                    </dd>
+                </dl>
+            #end
+        #end
+    </li>
+</ul>

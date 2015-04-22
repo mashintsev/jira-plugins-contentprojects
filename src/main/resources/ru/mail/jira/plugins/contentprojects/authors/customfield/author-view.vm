@@ -1,0 +1,14 @@
+#if( $value )
+    #if( $value.user )
+        <span class="user-hover" rel="$value.user.name">
+            <span class="aui-avatar aui-avatar-small">
+                <span class="aui-avatar-inner">
+                    <img src="$value.getAvatarUrl( false )" />
+                </span>
+            </span>
+            $value.shortCaption
+        </span>
+    #else
+        $value.shortCaption
+    #end
+#end

@@ -1,0 +1,130 @@
+<html>
+<head>
+    <title>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.title" )</title>
+    <meta name="decorator" content="general" />
+    $webResourceManager.requireResource( "ru.mail.jira.plugins.contentprojects:freelancers-resource" )
+</head>
+<body>
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-main">
+            <h1>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.title" )</h1>
+        </div>
+        <div class="aui-page-header-actions">
+            <div class="aui-buttons">
+                <button class="aui-button" id="contentprojects-freelancer-add">
+                    <span class="aui-icon aui-icon-small aui-iconfont-add"></span>
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.addFreelancer" )
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="aui-page-panel">
+    <div class="aui-page-panel-inner">
+        <section class="aui-page-panel-content">
+            <table class="aui aui-table-rowhover">
+                <thead>
+                <tr>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.fullName" )</th>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.payeeName" )</th>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractDate" )</th>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractType" )</th>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.inn" )</th>
+                    <th>$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.snils" )</th>
+                    <th>$i18n.getText( "common.words.operations" )</th>
+                </tr>
+                </thead>
+                <tbody id="contentprojects-freelancers">
+                    #foreach( $freelancer in $action.getFreelancers() )
+                    <tr id="contentprojects-freelancer-$freelancer.ID" class="contentprojects-freelancer">
+                        <td class="contentprojects-freelancer-full-name">$freelancer.fullName</td>
+                        <td class="contentprojects-freelancer-payee-name">$!freelancer.payeeName</td>
+                        <td class="contentprojects-freelancer-contract-date">$action.formatDate( $freelancer.contractDate )</td>
+                        <td class="contentprojects-freelancer-contract-type">$i18n.getText( $freelancer.contractType.labelKey )</td>
+                        <td class="contentprojects-freelancer-inn">$!freelancer.inn</td>
+                        <td class="contentprojects-freelancer-snils">$!freelancer.snils</td>
+                        <td>
+                            <ul class="operations-list">
+                                <li><a href="#" class="contentprojects-freelancer-edit">$i18n.getText( "common.forms.edit" )</a></li>
+                                <li><a href="#" class="contentprojects-freelancer-delete">$i18n.getText( "common.words.delete" )</a></li>
+                            </ul>
+                        </td>
+                    </tr>
+                    #end
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+<section role="dialog" id="contentprojects-dialog" class="aui-layer aui-dialog2" aria-hidden="true">
+    <header class="aui-dialog2-header">
+        <h2 class="aui-dialog2-header-main"></h2>
+    </header>
+    <div class="aui-dialog2-content">
+        <form class="aui ajs-dirty-warning-exempt">
+            <input type="hidden" id="contentprojects-dialog-id">
+            <div class="field-group">
+                <label for="contentprojects-dialog-full-name">
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.fullName" )
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <input class="text" type="text" id="contentprojects-dialog-full-name" maxlength="254" />
+                <div id="contentprojects-dialog-full-name-error" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label for="contentprojects-dialog-payee-name">$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.payeeName" )</label>
+                <input class="text" type="text" id="contentprojects-dialog-payee-name" maxlength="254" />
+                <div class="description">$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.payeeName.description" )</div>
+                <div id="contentprojects-dialog-payee-name-error" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label for="contentprojects-dialog-contract-date">
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractDate" )
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <input type="date" id="contentprojects-dialog-contract-date" class="aui-date-picker text" />
+                <div id="contentprojects-dialog-contract-date-error" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label for="contentprojects-dialog-contract-type">
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractType" )
+                    <span class="aui-icon icon-required"></span>
+                </label>
+                <select id="contentprojects-dialog-contract-type" class="select">
+                    <option value="SOLE_PROPRIETORSHIP">$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractType.soleProprietorship" )</option>
+                    <option value="CIVIL_LAW_CONTRACT">$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractType.civilLawContract" )</option>
+                    <option value="NON_RESIDENT">$i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.contractType.nonResident" )</option>
+                </select>
+                <div id="contentprojects-dialog-contract-type-error" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label for="contentprojects-dialog-inn">
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.inn" )
+                    <span id="contentprojects-dialog-inn-req" class="aui-icon icon-required"></span>
+                </label>
+                <input class="text" type="text" id="contentprojects-dialog-inn" maxlength="254" />
+                <div id="contentprojects-dialog-inn-error" class="error"></div>
+            </div>
+            <div class="field-group">
+                <label for="contentprojects-dialog-snils">
+                    $i18n.getText( "ru.mail.jira.plugins.contentprojects.authors.freelancers.snils" )
+                    <span id="contentprojects-dialog-snils-req" class="aui-icon icon-required hidden"></span>
+                </label>
+                <input class="text" type="text" id="contentprojects-dialog-snils" maxlength="254" />
+                <div id="contentprojects-dialog-snils-error" class="error"></div>
+            </div>
+            <input class="hidden" type="submit" />
+        </form>
+    </div>
+    <footer class="aui-dialog2-footer">
+        <div class="aui-dialog2-footer-actions">
+            <button id="contentprojects-dialog-ok" class="aui-button aui-button-primary"></button>
+            <button id="contentprojects-dialog-cancel" class="aui-button aui-button-link">$i18n.getText("common.words.cancel")</button>
+        </div>
+    </footer>
+</section>
+</body>
+</html>

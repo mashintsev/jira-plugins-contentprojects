@@ -1,0 +1,21 @@
+#contentprojects-freelancers .contentprojects-freelancer-inn,
+#contentprojects-freelancers .contentprojects-freelancer-snils,
+#contentprojects-freelancers .operations-list {
+    white-space: nowrap;
+}
+
+#contentprojects-dialog {
+    width: 500px;
+}
+
+#contentprojects-dialog form {
+    margin-top: 0;
+}
+
+.aui-datepicker-dialog {
+    z-index: 9999 !important;
+}
+
+.contentprojects-dialog-error-field {
+    border-color: red !important;
+}

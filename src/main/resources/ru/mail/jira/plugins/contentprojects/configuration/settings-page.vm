@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>$action.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.title" )</title>
+    <meta name="decorator" content="admin" />
+    <meta name="projectKey" content="$!projectKey" />
+    <meta name="admin.active.section" content="atl.jira.proj.config" />
+    <meta name="admin.active.tab" content="ru.mail.jira.plugins.contentprojects:settings-link" />
+</head>
+<body>
+<h2>$action.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.title" )</h2>
+
+#if( $saved )
+    <div class="aui-message aui-message-success">
+        <span class="aui-icon icon-success"></span>
+        <p>$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.saved" )</p>
+    </div>
+#end
+#if( $action.hasErrorMessages )
+    <div class="aui-message aui-message-error">
+        <span class="aui-icon icon-error"></span>
+        #foreach( $errorMessage in $action.errorMessages )<p>$errorMessage</p>#end
+    </div>
+#end
+
+#macro( fieldError $name )
+    #if( $action.hasErrors && $action.errors.get( $name ) )
+    <div class="error">$action.errors.get( $name )</div>
+    #end
+#end
+<form class="aui" action="ContentProjectsSettings.jspa" method="post">
+    <input type="hidden" name="atl_token" value="$atl_token" />
+    <input type="hidden" name="projectKey" value="$!projectKey" />
+    <div class="field-group">
+        <label for="counterId">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.counterId" )<span class="aui-icon icon-required"></span></label>
+        <input type="text" class="text" id="counterId" name="counterId" value="$!counterId" />
+        #fieldError( "counterId" )
+    </div>
+    <div class="field-group">
+        <label for="counterPassword">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.counterPassword" )<span class="aui-icon icon-required"></span></label>
+        <input type="password" class="password" id="counterPassword" name="counterPassword" value="$!counterPassword" />
+        #fieldError( "counterPassword" )
+    </div>
+    #foreach( $scrollCounterId in $scrollCounterIds )
+        <div class="field-group">
+            <label for="scrollCounterId_$velocityCount">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.scrollCounterId", $velocityCount )</label>
+            <input type="text" class="text" id="scrollCounterId_$velocityCount" name="scrollCounterIds" value="$!scrollCounterId" />
+            #fieldError( "scrollCounterId_$velocityCount" )
+        </div>
+    #end
+    <div class="field-group">
+        <label for="scrollCountersPassword">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.scrollCountersPassword" )</label>
+        <input type="password" class="password" id="scrollCountersPassword" name="scrollCountersPassword" value="$!scrollCountersPassword" />
+        #fieldError( "scrollCountersPassword" )
+    </div>
+    <div class="field-group">
+        <label for="apiUrl">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.apiUrl" )</label>
+        <input type="text" class="text" id="apiUrl" name="apiUrl" value="$!apiUrl" />
+        #fieldError( "apiUrl" )
+    </div>
+    <div class="buttons-container">
+        <div class="buttons">
+            <input type="submit" class="aui-button" value="$action.getText( "common.words.save" )" />
+        </div>
+    </div>
+</form>
+</body>
+</html>

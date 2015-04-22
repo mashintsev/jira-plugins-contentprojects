@@ -1,0 +1,75 @@
+<html>
+<head>
+    <title>$i18n.getText( "ru.mail.jira.plugins.contentprojects.extras.createActs.title" )</title>
+    <meta name="decorator" content="general" />
+</head>
+<body class="aui-page-focused aui-page-size-large">
+<header class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-main">
+            <h1>$i18n.getText( "ru.mail.jira.plugins.contentprojects.extras.createActs.title" )</h1>
+        </div>
+    </div>
+</header>
+
+<div class="aui-page-panel">
+    <div class="aui-page-panel-inner">
+        <section class="aui-page-panel-content">
+            #if( $action.hasErrorMessages )
+                <div class="aui-message aui-message-error">
+                    <span class="aui-icon icon-error"></span>
+                    #foreach( $errorMessage in $action.errorMessages )<p>$errorMessage</p>#end
+                </div>
+            #end
+            #macro( fieldError $name )
+                #if( $action.hasErrors && $action.errors.get( $name ) )
+                    <div class="error">$action.errors.get( $name )</div>
+                #end
+            #end
+            <form class="aui" action="ContentProjectsCreateActs.jspa" method="post">
+                <input type="hidden" name="atl_token" value="$atl_token" />
+                <div class="field-group">
+                    <label for="contentprojects-payment-month">$action.paymentMonthFieldName</label>
+                    <select class="select" id="contentprojects-payment-month" name="optionId">
+                        #foreach( $option in $action.paymentMonthOptions )
+                        <option value="$option.optionId" #if( $option.optionId == $optionId )selected="selected"#end>$option.value</option>
+                        #end
+                    </select>
+                    #fieldError( "optionId" )
+                </div>
+                <fieldset class="group">
+                    <legend><span>$i18n.getText( "common.concepts.projects" )</span></legend>
+                    #foreach( $project in $action.contentProjects )
+                        #set( $checked = false )
+                        #foreach( $projectId in $projectIds )
+                            #if( $project.id == $projectId )
+                                #set( $checked = true )
+                            #end
+                        #end
+                        <div class="checkbox">
+                            <input class="checkbox" type="checkbox" name="projectIds" value="$project.id" id="contentprojects-project-$project.id" #if( $checked )checked="checked"#end />
+                            <label for="contentprojects-project-$project.id">
+                                <span class="aui-avatar aui-avatar-project aui-avatar-xsmall">
+                                    <span class="aui-avatar-inner">
+                                        <img src="projectavatar?pid=$project.id&avatarId=$project.avatar.id&size=xxmall" />
+                                    </span>
+                                </span>
+                                $project.name
+                            </label>
+                        </div>
+                        #fieldError( "project-$project.id" )
+                    #end
+                    #fieldError( "projectIds" )
+                </fieldset>
+                <div class="buttons-container">
+                    <div class="buttons">
+                        <input class="button submit" type="submit" value="$i18n.getText( "common.forms.create" )" />
+                        <a class="aui-button aui-button-link cancel" href="default.jsp">$i18n.getText( "common.words.cancel" )</a>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+</body>
+</html>

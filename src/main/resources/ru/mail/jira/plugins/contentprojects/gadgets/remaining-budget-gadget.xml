@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+    <ModulePrefs title="__MSG_ru.mail.jira.plugins.contentprojects.gadgets.remainingBudget.title__"
+                 description="__MSG_ru.mail.jira.plugins.contentprojects.gadgets.remainingBudget.description__"
+                 author="Andrey Molchanov"
+                 author_email="a.molchanov@corp.mail.ru"
+                 thumbnail='#staticResourceUrl("ru.mail.jira.plugins.contentprojects:remaining-budget-resource", "remaining-budget-gadget.png")'>
+        <Require feature="dynamic-height" />
+        <Optional feature="auth-refresh"/>
+        <Require feature="oauthpopup" />
+        <Require feature="setprefs" />
+        <Require feature="settitle" />
+        <Require feature="views" />
+        <Optional feature="atlassian.util" />
+        <Optional feature="gadget-directory">
+            <Param name="categories">Other</Param>
+        </Optional>
+        #oauth
+        #supportedLocales("gadget.common,common.concepts,ru.mail.jira.plugins.contentprojects.gadgets.remainingBudget")
+    </ModulePrefs>
+    <UserPref name="isConfigured" datatype="hidden" default_value="false" />
+    <UserPref name="projectId" datatype="hidden" default_value="" />
+    <UserPref name="refresh" datatype="hidden" default_value="false" />
+    <Content type="html">
+        <![CDATA[
+            #requireResource("ru.mail.jira.plugins.contentprojects:remaining-budget-resource")
+            #includeResources()
+        ]]>
+    </Content>
+</Module>

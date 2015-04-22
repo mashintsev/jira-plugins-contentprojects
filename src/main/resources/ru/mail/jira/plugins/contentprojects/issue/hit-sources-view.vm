@@ -1,0 +1,27 @@
+#if( $value )
+    <div>$numberTool.format( $value )</div>
+#end
+#if( $google && $google > 0 )
+    <span class="contentprojects-google">$numberTool.format( $google )</span>
+#end
+#if( $yandex && $yandex > 0 )
+    <span class="contentprojects-yandex">$numberTool.format( $yandex )</span>
+#end
+#if( $others && $others > 0 )
+    <span class="contentprojects-others">$numberTool.format( $others )</span>
+#end
+#if( $facebook && $facebook > 0 )
+    <span class="contentprojects-facebook">$numberTool.format( $facebook )</span>
+#end
+#if( $mymail && $mymail > 0 )
+    <span class="contentprojects-mymail">$numberTool.format( $mymail )</span>
+#end
+#if( $odnoklassniki && $odnoklassniki > 0 )
+    <span class="contentprojects-odnoklassniki">$numberTool.format( $odnoklassniki )</span>
+#end
+#if( $twitter && $twitter > 0 )
+    <span class="contentprojects-twitter">$numberTool.format( $twitter )</span>
+#end
+#if( $vkontakte && $vkontakte > 0 )
+    <span class="contentprojects-vkontakte">$numberTool.format( $vkontakte )</span>
+#end

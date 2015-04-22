@@ -1,0 +1,243 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="atlassian-data-center-compatible">true</param>
+    </plugin-info>
+
+    <resource type="i18n" name="i18n" location="ru/mail/jira/plugins/contentprojects/contentprojects" />
+
+    <rest key="rest" path="/contentprojects" version="1.0" />
+
+    <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" />
+    <ao key="ao-entities">
+        <entity>ru.mail.jira.plugins.contentprojects.authors.freelancers.Freelancer</entity>
+    </ao>
+
+    <!-- Authors -->
+
+    <component key="freelancer-manager" class="ru.mail.jira.plugins.contentprojects.authors.freelancers.FreelancerManager" />
+
+    <web-item key="freelancers-link" section="system.user.options/contentprojects-user-section">
+        <label key="ru.mail.jira.plugins.contentprojects.authors.freelancers.title" />
+        <link>/secure/ContentProjectsFreelancers.jspa</link>
+    </web-item>
+
+    <web-resource key="freelancers-resource">
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:dialog2</dependency>
+        <dependency>com.atlassian.auiplugin:aui-date-picker</dependency>
+        <resource type="download" name="freelancers-page.css" location="ru/mail/jira/plugins/contentprojects/authors/freelancers/freelancers-page.css" />
+        <resource type="download" name="freelancers-page.js" location="ru/mail/jira/plugins/contentprojects/authors/freelancers/freelancers-page.js" />
+    </web-resource>
+
+    <webwork1 key="freelancers-action" class="java.lang.Object" roles-required="use">
+        <actions>
+            <action name="ru.mail.jira.plugins.contentprojects.authors.freelancers.ContentProjectsFreelancersAction" alias="ContentProjectsFreelancers">
+                <view name="success">/ru/mail/jira/plugins/contentprojects/authors/freelancers/freelancers-page.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <component key="author-manager" class="ru.mail.jira.plugins.contentprojects.authors.AuthorManager" />
+
+    <web-resource key="author-cf-type-resource">
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+        <resource type="download" name="author.js" location="ru/mail/jira/plugins/contentprojects/authors/customfield/author.js" />
+        <context>atl.general</context>
+    </web-resource>
+
+    <customfield-type key="author-cf-type" i18n-name-key="ru.mail.jira.plugins.contentprojects.authors.customfield.name" class="ru.mail.jira.plugins.contentprojects.authors.customfield.AuthorCFType">
+        <description key="ru.mail.jira.plugins.contentprojects.authors.customfield.description" />
+        <resource type="velocity" name="view" location="ru/mail/jira/plugins/contentprojects/authors/customfield/author-view.vm" />
+        <resource type="velocity" name="edit" location="ru/mail/jira/plugins/contentprojects/authors/customfield/author-edit.vm" />
+    </customfield-type>
+
+    <customfield-searcher key="author-searcher" i18n-name-key="ru.mail.jira.plugins.contentprojects.authors.customfield.searcher.name" class="ru.mail.jira.plugins.contentprojects.authors.customfield.AuthorSearcher">
+        <resource type="velocity" name="label" location="templates/plugins/fields/view-searcher/label-searcher-htmltext.vm" />
+        <valid-customfield-type package="ru.mail.jira.plugins.contentprojects" key="author-cf-type" />
+    </customfield-searcher>
+
+    <!-- Configuration -->
+
+    <component-import key="plugin-settings-factory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+    <component key="plugin-data" class="ru.mail.jira.plugins.contentprojects.configuration.PluginData" />
+
+    <web-section key="contentprojects-section" location="atl.jira.proj.config">
+        <conditions type="AND">
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition">
+                <param name="permission">project</param>
+            </condition>
+            <condition class="ru.mail.jira.plugins.contentprojects.common.IsContentProjectCondition" />
+        </conditions>
+    </web-section>
+
+    <web-item key="settings-link" section="atl.jira.proj.config/contentprojects-section">
+        <label key="ru.mail.jira.plugins.contentprojects.configuration.settings.title" />
+        <conditions type="AND">
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition">
+                <param name="permission">project</param>
+            </condition>
+            <condition class="ru.mail.jira.plugins.contentprojects.common.IsContentProjectCondition" />
+        </conditions>
+        <link>/secure/ContentProjectsSettings!default.jspa?projectKey=$projectKeyEncoded</link>
+    </web-item>
+
+    <webwork1 key="settings-action" class="java.lang.Object" roles-required="use">
+        <actions>
+            <action name="ru.mail.jira.plugins.contentprojects.configuration.ContentProjectsSettingsAction" alias="ContentProjectsSettings">
+                <view name="input">/ru/mail/jira/plugins/contentprojects/configuration/settings-page.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <web-item key="budget-link" section="atl.jira.proj.config/contentprojects-section">
+        <label key="ru.mail.jira.plugins.contentprojects.configuration.budget.title" />
+        <conditions type="AND">
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.HasProjectPermissionCondition">
+                <param name="permission">project</param>
+            </condition>
+            <condition class="ru.mail.jira.plugins.contentprojects.common.IsContentProjectCondition" />
+        </conditions>
+        <link>/secure/ContentProjectsBudget!default.jspa?projectKey=$projectKeyEncoded</link>
+    </web-item>
+
+    <webwork1 key="budget-action" class="java.lang.Object" roles-required="use">
+        <actions>
+            <action name="ru.mail.jira.plugins.contentprojects.configuration.ContentProjectsBudgetAction" alias="ContentProjectsBudget">
+                <view name="input">/ru/mail/jira/plugins/contentprojects/configuration/budget-page.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <!-- Extras -->
+
+    <web-section key="contentprojects-user-section" location="system.user.options" weight="250">
+        <label key="ru.mail.jira.plugins.contentprojects.extras.userSectionTitle" />
+        <condition class="ru.mail.jira.plugins.contentprojects.common.IsAccountantUserCondition" />
+    </web-section>
+
+    <web-item key="create-acts-link" section="system.user.options/contentprojects-user-section">
+        <label key="ru.mail.jira.plugins.contentprojects.extras.createActs.title" />
+        <condition class="ru.mail.jira.plugins.contentprojects.common.IsAccountantUserCondition" />
+        <link>/secure/ContentProjectsCreateActs!default.jspa</link>
+    </web-item>
+
+    <webwork1 key="create-acts-action" class="java.lang.Object" roles-required="use">
+        <actions>
+            <action name="ru.mail.jira.plugins.contentprojects.extras.ContentProjectsCreateActsAction" alias="ContentProjectsCreateActs">
+                <view name="input">/ru/mail/jira/plugins/contentprojects/extras/create-acts-page.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <!-- Gadgets -->
+
+    <web-resource key="number-field-statistics-resource">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.jira.gadgets:autocomplete</dependency>
+        <dependency>com.atlassian.jira.gadgets:column-picker</dependency>
+        <resource type="download" name="number-field-statistics-gadget.css" location="ru/mail/jira/plugins/contentprojects/gadgets/number-field-statistics-gadget.css" />
+        <resource type="download" name="number-field-statistics-gadget.js" location="ru/mail/jira/plugins/contentprojects/gadgets/number-field-statistics-gadget.js" />
+        <resource type="download" name="number-field-statistics-gadget.png" location="ru/mail/jira/plugins/contentprojects/gadgets/number-field-statistics-gadget.png" />
+    </web-resource>
+
+    <gadget key="number-field-statistics-gadget" location="ru/mail/jira/plugins/contentprojects/gadgets/number-field-statistics-gadget.xml" publish-location="ru.mail.jira.plugins.contentprojects:number-field-statistics-gadget/ru/mail/jira/plugins/contentprojects/statistics/number-field-statistics-gadget.xml" />
+
+    <web-resource key="remaining-budget-resource">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.jira.gadgets:common-lite</dependency>
+        <resource type="download" name="remaining-budget-gadget.css" location="ru/mail/jira/plugins/contentprojects/gadgets/remaining-budget-gadget.css" />
+        <resource type="download" name="remaining-budget-gadget.js" location="ru/mail/jira/plugins/contentprojects/gadgets/remaining-budget-gadget.js" />
+        <resource type="download" name="remaining-budget-gadget.png" location="ru/mail/jira/plugins/contentprojects/gadgets/remaining-budget-gadget.png" />
+    </web-resource>
+
+    <gadget key="remaining-budget-gadget" location="ru/mail/jira/plugins/contentprojects/gadgets/remaining-budget-gadget.xml" />
+
+    <!-- Issue -->
+
+    <web-resource key="hit-sources-resource">
+        <resource type="download" name="hit-sources.css" location="ru/mail/jira/plugins/contentprojects/issue/hit-sources.css" />
+        <resource type="download" name="google.png" location="ru/mail/jira/plugins/contentprojects/issue/google.png" />
+        <resource type="download" name="yandex.png" location="ru/mail/jira/plugins/contentprojects/issue/yandex.png" />
+        <resource type="download" name="others.png" location="ru/mail/jira/plugins/contentprojects/issue/others.png" />
+        <resource type="download" name="facebook.png" location="ru/mail/jira/plugins/contentprojects/issue/facebook.png" />
+        <resource type="download" name="mymail.png" location="ru/mail/jira/plugins/contentprojects/issue/mymail.png" />
+        <resource type="download" name="odnoklassniki.png" location="ru/mail/jira/plugins/contentprojects/issue/odnoklassniki.png" />
+        <resource type="download" name="twitter.png" location="ru/mail/jira/plugins/contentprojects/issue/twitter.png" />
+        <resource type="download" name="vkontakte.png" location="ru/mail/jira/plugins/contentprojects/issue/vkontakte.png" />
+        <context>atl.general</context>
+    </web-resource>
+
+    <customfield-type key="search-engines-cf-type" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.searchEngines.name" class="ru.mail.jira.plugins.contentprojects.issue.HitSourcesCFType">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.searchEngines.description" />
+        <resource type="velocity" name="view" location="ru/mail/jira/plugins/contentprojects/issue/hit-sources-view.vm" />
+        <resource type="velocity" name="column-view" location="ru/mail/jira/plugins/contentprojects/issue/hit-sources-column-view.vm" />
+    </customfield-type>
+
+    <customfield-type key="social-media-cf-type" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.socialMedia.name" class="ru.mail.jira.plugins.contentprojects.issue.HitSourcesCFType">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.socialMedia.description" />
+        <resource type="velocity" name="view" location="ru/mail/jira/plugins/contentprojects/issue/hit-sources-view.vm" />
+        <resource type="velocity" name="column-view" location="ru/mail/jira/plugins/contentprojects/issue/hit-sources-column-view.vm" />
+    </customfield-type>
+
+    <customfield-searcher key="hit-sources-searcher" i18n-name-key="admin.customfield.searcher.exactnumber.name" class="com.atlassian.jira.issue.customfields.searchers.ExactNumberSearcher">
+        <resource type="velocity" name="search" location="templates/plugins/fields/edit-searcher/search-basictext.vm" />
+        <resource type="velocity" name="view" location="templates/plugins/fields/view-searcher/view-searcher-basictext.vm" />
+        <valid-customfield-type package="ru.mail.jira.plugins.contentprojects" key="search-engines-cf-type"/>
+        <valid-customfield-type package="ru.mail.jira.plugins.contentprojects" key="social-media-cf-type"/>
+    </customfield-searcher>
+
+    <workflow-validator key="payment-month-is-open-validator" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.paymentMonthIsOpen.name" class="ru.mail.jira.plugins.contentprojects.issue.WorkflowNoInputPluginValidatorFactory">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.paymentMonthIsOpen.description" />
+        <validator-class>ru.mail.jira.plugins.contentprojects.issue.PaymentMonthIsOpenValidator</validator-class>
+        <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.paymentMonthIsOpen.description" )]]></resource>
+    </workflow-validator>
+
+    <workflow-function key="material-published-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.materialPublished.name" class="com.atlassian.jira.plugin.workflow.WorkflowNoInputPluginFactory">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.materialPublished.description" />
+        <function-class>ru.mail.jira.plugins.contentprojects.issue.MaterialPublishedFunction</function-class>
+        <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.materialPublished.description" )]]></resource>
+    </workflow-function>
+
+    <workflow-function key="collect-statistics-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.collectStatistics.name" class="com.atlassian.jira.plugin.workflow.WorkflowNoInputPluginFactory">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" />
+        <function-class>ru.mail.jira.plugins.contentprojects.issue.CollectStatisticsFunction</function-class>
+        <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" )]]></resource>
+    </workflow-function>
+
+    <web-resource key="statistics-panel-resource">
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="statistics-panel.js" location="ru/mail/jira/plugins/contentprojects/issue/statistics-panel.js" />
+        <context>atl.general</context>
+    </web-resource>
+
+    <web-panel key="statistics-panel" location="atl.jira.view.issue.right.context" weight="50">
+        <label key="ru.mail.jira.plugins.contentprojects.issue.statisticsPanel.title" />
+        <condition class="ru.mail.jira.plugins.contentprojects.common.IsContentProjectCondition" />
+        <context-provider class="ru.mail.jira.plugins.contentprojects.issue.StatisticsPanel" />
+        <resource type="velocity" name="view" location="/ru/mail/jira/plugins/contentprojects/issue/statistics-panel.vm" />
+    </web-panel>
+
+    <!-- Statistics -->
+
+    <customfield-searcher key="month-searcher" i18n-name-key="ru.mail.jira.plugins.contentprojects.statistics.monthSearcher.name" class="ru.mail.jira.plugins.contentprojects.statistics.searchers.MonthSearcher">
+        <resource type="velocity" name="label" location="templates/plugins/fields/view-searcher/label-searcher-htmltext.vm" />
+        <valid-customfield-type package="com.atlassian.jira.plugin.system.customfieldtypes" key="datetime" />
+    </customfield-searcher>
+
+    <component key="sample-accessor" class="ru.mail.jira.plugins.contentprojects.statistics.SampleAccessor" />
+
+</atlassian-plugin>
