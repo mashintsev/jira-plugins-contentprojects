@@ -166,10 +166,10 @@ public class RemainingBudgetResource {
             this.url = url;
             this.issueCount = issueCount;
 
-            this.budget = numberTool.format(budget);
-            this.spent = numberTool.format(spent);
-            this.planned = numberTool.format(planned);
-            this.left = numberTool.format(budget - spent - planned);
+            this.budget = numberTool.format("0.00", budget);
+            this.spent = numberTool.format("0.00", spent);
+            this.planned = numberTool.format("0.00", planned);
+            this.left = numberTool.format("0.00", budget - spent - planned);
 
             double max = Math.max(budget, spent + planned) / 100;
             this.budgetWidth = budget / max;
