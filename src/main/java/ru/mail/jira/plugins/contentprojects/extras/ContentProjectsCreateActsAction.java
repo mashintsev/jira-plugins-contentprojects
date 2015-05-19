@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.LocalUtils;
+import ru.mail.jira.plugins.commons.RestExecutor;
 import ru.mail.jira.plugins.contentprojects.authors.Author;
 import ru.mail.jira.plugins.contentprojects.authors.FreelancerAuthor;
 import ru.mail.jira.plugins.contentprojects.authors.freelancers.Freelancer;
@@ -31,12 +32,20 @@ import ru.mail.jira.plugins.contentprojects.gadgets.RemainingBudgetResource;
 import webwork.action.ServletActionContext;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Path("/createActs")
+@Produces({MediaType.APPLICATION_JSON})
 public class ContentProjectsCreateActsAction extends JiraWebActionSupport {
     private static final String PAYMENT_ACT = "\u0410\u043A\u0442 \u043E\u043F\u043B\u0430\u0442\u044B";
     private final DateFormat OPTION_FORMAT = LocalUtils.updateMonthNames(new SimpleDateFormat("MMMM yyyy"), LocalUtils.MONTH_NAMES_NOMINATIVE);
@@ -299,5 +308,26 @@ public class ContentProjectsCreateActsAction extends JiraWebActionSupport {
     @SuppressWarnings("UnusedDeclaration")
     public void setProjectIds(long[] projectIds) {
         this.projectIds = projectIds;
+    }
+
+    @GET
+    @Path("/enableOption")
+    public Response enableOption(@QueryParam("optionId") final long optionId,
+                                 @QueryParam("projectKey") final String projectKey) {
+        return new RestExecutor<Void>() {
+            @Override
+            protected Void doAction() throws Exception {
+                Option option = optionsManager.findByOptionId(optionId);
+                if (option == null)
+                    throw new IllegalArgumentException("Option ID is invalid.");
+
+                Project project = projectManager.getProjectObjByKeyIgnoreCase(projectKey);
+                if (project == null || !Consts.PROJECT_IDS.contains(project.getId()))
+                    throw new IllegalArgumentException("Project key is invalid.");
+
+                pluginData.setActCreated(project, option, false);
+                return null;
+            }
+        }.getResponse();
     }
 }
