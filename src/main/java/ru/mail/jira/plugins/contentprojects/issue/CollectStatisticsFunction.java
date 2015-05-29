@@ -241,7 +241,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_YANDEX_CF_ID), hitsSearchEngines.getYandex());
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_OTHERS_CF_ID), hitsSearchEngines.getOthers());
             for (int i = 0; i < Consts.SCROLL_CF_IDS.size(); i++)
-                issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(i)), scrolls[i] != null ? scrolls[i].doubleValue() : null);
+                issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(i)), scrolls[i] != null && hits != 0 ? scrolls[i].doubleValue() * 100 / hits : null);
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.COMMENTS_CF_ID), comments != null ? comments.doubleValue() : null);
         } catch (Exception e) {
             log.error(e);
