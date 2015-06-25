@@ -46,7 +46,9 @@ public class StatisticsPanel implements ContextProvider {
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_GOOGLE_CF_ID),
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_YANDEX_CF_ID),
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_OTHERS_CF_ID),
-                CommonUtils.getCustomField(Consts.COMMENTS_CF_ID)
+                CommonUtils.getCustomField(Consts.COMMENTS_CF_ID),
+                CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID),
+                CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID)
         );
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.searchService = searchService;
@@ -123,6 +125,8 @@ public class StatisticsPanel implements ContextProvider {
             fields.add(getSocialMediaField(fieldStatisticValues, new int[] { 10, 11, 12, 13, 14, 15 }, issue, true));
             fields.add(getSearchEnginesField(fieldStatisticValues, new int[] { 16, 17, 18, 19 }, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 20, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 21, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 22, issue, true));
 
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("numberTool", new NumberTool(jiraAuthenticationContext.getI18nHelper().getLocale()));
