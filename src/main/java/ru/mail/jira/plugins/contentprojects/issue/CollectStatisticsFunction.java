@@ -224,8 +224,8 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             Integer[] scrolls = getScrolls(filter, publishingDate, scrollCounterIds, scrollCountersPassword);
             Integer comments = getComments(url, apiUrl);
 
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HIT_COST_CF_ID), hits != 0 ? (cost / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_COST_CF_ID), shares.getTotal() != 0 ? (cost / shares.getTotal()) : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HIT_COST_CF_ID), hits != 0 ? Math.round(cost / hits * 10) / 10.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_COST_CF_ID), shares.getTotal() != 0 ? Math.round(cost / shares.getTotal() * 10) /10.0 : null);
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_CF_ID), (double) hits);
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_FACEBOOK_CF_ID), shares.getFacebook());
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_MYMAIL_CF_ID), shares.getMymail());
@@ -241,20 +241,20 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_YANDEX_CF_ID), hitsSearchEngines.getYandex());
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_OTHERS_CF_ID), hitsSearchEngines.getOthers());
             for (int i = 0; i < Consts.SCROLL_CF_IDS.size(); i++)
-                issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(i)), scrolls[i] != null && hits != 0 ? scrolls[i].doubleValue() * 100 / hits : null);
+                issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(i)), scrolls[i] != null && hits != 0 ? Math.round(scrolls[i].doubleValue() / hits * 1000) / 10.0  : null);
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.COMMENTS_CF_ID), comments != null ? comments.doubleValue() : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID), hits != 0 ? (shares.getTotal() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_FACEBOOK_CF_ID), hits != 0 ? (shares.getFacebook() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_MYMAIL_CF_ID), hits != 0 ? (shares.getMymail() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_ODNOKLASSNIKI_CF_ID), hits != 0 ? (shares.getOdnoklassniki() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_TWITTER_CF_ID), hits != 0 ? (shares.getTwitter() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_VKONTAKTE_CF_ID), hits != 0 ? (shares.getVkontakte() / hits) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID), shares.getTotal() != 0 ? (hitsSocialMedia.getTotal() / shares.getTotal()) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_FACEBOOK_CF_ID), shares.getFacebook() != 0 ? (hitsSocialMedia.getFacebook() / shares.getFacebook()) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_MYMAIL_CF_ID), shares.getMymail() != 0 ? (hitsSocialMedia.getMymail() / shares.getMymail()) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_ODNOKLASSNIKI_CF_ID), shares.getOdnoklassniki() != 0 ? (hitsSocialMedia.getOdnoklassniki() / shares.getOdnoklassniki()) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_TWITTER_CF_ID), shares.getTwitter() != 0 ? (hitsSocialMedia.getTwitter() / shares.getTwitter()) : null);
-            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_VKONTAKTE_CF_ID), shares.getVkontakte() != 0 ? (hitsSocialMedia.getVkontakte() / shares.getVkontakte()) : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID), hits != 0 ? Math.round(shares.getTotal() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_FACEBOOK_CF_ID), hits != 0 ? Math.round(shares.getFacebook() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_MYMAIL_CF_ID), hits != 0 ? Math.round(shares.getMymail() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_ODNOKLASSNIKI_CF_ID), hits != 0 ? Math.round(shares.getOdnoklassniki() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_TWITTER_CF_ID), hits != 0 ? Math.round(shares.getTwitter() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_VKONTAKTE_CF_ID), hits != 0 ? Math.round(shares.getVkontakte() / hits * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID), shares.getTotal() != 0 ? Math.round(hitsSocialMedia.getTotal() / shares.getTotal() * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_FACEBOOK_CF_ID), shares.getFacebook() != 0 ? Math.round(hitsSocialMedia.getFacebook() / shares.getFacebook() * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_MYMAIL_CF_ID), shares.getMymail() != 0 ? Math.round(hitsSocialMedia.getMymail() / shares.getMymail()) * 100 / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_ODNOKLASSNIKI_CF_ID), shares.getOdnoklassniki() != 0 ? Math.round(hitsSocialMedia.getOdnoklassniki() / shares.getOdnoklassniki() * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_TWITTER_CF_ID), shares.getTwitter() != 0 ? Math.round(hitsSocialMedia.getTwitter() / shares.getTwitter() * 100) / 100.0 : null);
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_VKONTAKTE_CF_ID), shares.getVkontakte() != 0 ? Math.round(hitsSocialMedia.getVkontakte() / shares.getVkontakte() * 100) / 100.0 : null);
         } catch (Exception e) {
             log.error(e);
             throw new WorkflowException(e);

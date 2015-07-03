@@ -55,12 +55,8 @@ public class Sample {
                 for (Double value : customFieldSample)
                     sum += value;
 
-                double median;
                 Collections.sort(customFieldSample);
-                if (customFieldSample.size() % 2 == 1)
-                    median = customFieldSample.get(customFieldSample.size() / 2);
-                else
-                    median = (customFieldSample.get(customFieldSample.size() / 2 - 1) + customFieldSample.get(customFieldSample.size() / 2)) / 2;
+                double median = customFieldSample.get(customFieldSample.size() / 2);
 
                 result.add(new Statistic(median, sum / customFieldSample.size(), sum));
             }
