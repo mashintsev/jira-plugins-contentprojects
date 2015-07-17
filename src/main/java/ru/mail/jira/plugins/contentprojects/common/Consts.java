@@ -35,7 +35,9 @@ public class Consts {
     public static final long HITS_SEARCH_ENGINES_GOOGLE_CF_ID = 26205;
     public static final long HITS_SEARCH_ENGINES_YANDEX_CF_ID = 26206;
     public static final long HITS_SEARCH_ENGINES_OTHERS_CF_ID = 26207;
-    public static final List<Long> SCROLL_CF_IDS = Arrays.asList(25700L, 25701L, 25702L, 25703L, 25704L, 25705L, 25706L);
+    public static final List<Long> SCROLL_CF_IDS = Arrays.asList(25700L, 25701L, 25702L, 25703L, 25704L);
+    public static final long TOTAL_TIME_CF_ID = 27602;
+    public static final List<Long> TIME_INTERVAL_CF_IDS = Arrays.asList(27603L, 27604L, 27605L);
     public static final long COMMENTS_CF_ID = 25401;
     public static final long SHARE_RATIO_CF_ID = 27109;
     public static final long SHARE_RATIO_FACEBOOK_CF_ID = 27110;
@@ -58,7 +60,7 @@ public class Consts {
     public static final long PAYMENT_ACT_CONTRAGENT_CF_ID = 24601;
     public static final String PAYMENT_ACT_CONTRAGENT_VALUE = "26964";
     public static final long PAYMENT_ACT_PROJECT_CF_ID = 11542;
-    public static final Map<Long,String> PAYMENT_ACT_PROJECT_VALUE_MAP = new HashMap<Long, String>();
+    public static final Map<Long, String> PAYMENT_ACT_PROJECT_VALUE_MAP = new HashMap<Long, String>();
     public static final long PAYMENT_ACT_TYPICAL_CONTRACTS_CF_ID = 26000;
     public static final long PAYMENT_ACT_TYPICAL_CONTRACTS_TEMPLATE_ID = 47;
     public static final String PAYMENT_ACT_LINK_TYPE = "depends on";
