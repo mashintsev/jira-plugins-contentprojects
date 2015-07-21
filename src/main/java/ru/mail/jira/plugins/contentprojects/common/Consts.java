@@ -38,6 +38,8 @@ public class Consts {
     public static final List<Long> SCROLL_CF_IDS = Arrays.asList(25700L, 25701L, 25702L, 25703L, 25704L);
     public static final long TOTAL_TIME_CF_ID = 27602;
     public static final List<Long> TIME_INTERVAL_CF_IDS = Arrays.asList(27603L, 27604L, 27605L);
+    public static final long ESTIMATED_TIME_CF_ID = 27700;
+    public static final long EXCESSIVE_TIME_CF_ID = 27701;
     public static final long COMMENTS_CF_ID = 25401;
     public static final long SHARE_RATIO_CF_ID = 27109;
     public static final long SHARE_RATIO_FACEBOOK_CF_ID = 27110;
@@ -77,7 +79,7 @@ public class Consts {
 
 //    public static final Collection<String> ACCOUNTANTS_GROUPS = Arrays.asList("jira-developers");
 //    public static final String AUTHORS_ROLE_NAME = "Users";
-//    public static final Collection<Long> PROJECT_IDS = Arrays.asList(10000L, 10001L);
+//    public static final Collection<Long> PROJECT_IDS = Arrays.asList(10000L, 10001L, 10100L, 10200L);
 //    public static final Collection<String> STATUS_SPENT_IDS = Arrays.asList("1");
 //    public static final Collection<String> STATUS_PLANNED_IDS = Arrays.asList("3");
 //
@@ -101,7 +103,11 @@ public class Consts {
 //    public static final long HITS_SOCIAL_MEDIA_ODNOKLASSNIKI_CF_ID = 10015;
 //    public static final long HITS_SOCIAL_MEDIA_TWITTER_CF_ID = 10016;
 //    public static final long HITS_SOCIAL_MEDIA_VKONTAKTE_CF_ID = 10017;
-//    public static final List<Long> SCROLL_CF_IDS = Arrays.asList(10021L, 10022L);
+//    public static final List<Long> SCROLL_CF_IDS = Arrays.asList(10021L, 10022L, 10100L, 10101L, 10102L);
+//    public static final long TOTAL_TIME_CF_ID = 10103;
+//    public static final List<Long> TIME_INTERVAL_CF_IDS = Arrays.asList(10104L, 10105L, 10106L);
+//    public static final long ESTIMATED_TIME_CF_ID = 10107;
+//    public static final long EXCESSIVE_TIME_CF_ID = 10108;
 //    public static final long SHARES_CF_ID = 10037;
 //    public static final long SHARES_FACEBOOK_CF_ID = 10008;
 //    public static final long SHARES_MYMAIL_CF_ID = 10009;

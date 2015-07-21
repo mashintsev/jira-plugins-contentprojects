@@ -37,8 +37,10 @@ public class MaterialPublishedFunction extends AbstractJiraFunctionProvider {
             String response = new HttpSender(apiUrl, url).sendGet();
             JSONObject json = new JSONObject(response);
             issue.setSummary(json.getJSONObject("data").getString("title"));
+            issue.setDescription(json.getJSONObject("data").getString("lead"));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.PUBLISHING_DATE_CF_ID), new Timestamp(json.getJSONObject("data").getLong("published") * 1000));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.CATEGORY_CF_ID), json.getJSONObject("data").getString("category"));
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.ESTIMATED_TIME_CF_ID), json.getJSONObject("data").has("words_count") ? Math.round(json.getJSONObject("data").getLong("words_count") / 140.0 * 100) / 100.0 : null);
         } catch (Exception e) {
             log.error(e);
             throw new WorkflowException(e);

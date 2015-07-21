@@ -25,10 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,7 +131,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
         return new SocialMedia(result[0], result[1], result[2], result[3], result[4]);
     }
 
-    private double getTime(String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
+    private Double getTime(String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
         long t = 0, v = 0;
 
         Calendar calendar = Calendar.getInstance();
@@ -145,14 +142,15 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
 
             String responseT = new HttpSender("http://top.mail.ru/json/goals?id=%s&password=%s&period=0&date=%s&goal=%s", counterId, counterPassword, date, "jse:t_" + filter).sendGet();
             JSONObject jsonT = new JSONObject(responseT);
-            t += jsonT.getLong("total2");
+            if (jsonT.has("total2") && !jsonT.isNull("total2"))
+                t += jsonT.getLong("total2");
 
             String responseV = new HttpSender("http://top.mail.ru/json/goals?id=%s&password=%s&period=0&date=%s&goal=%s", counterId, counterPassword, date, "jse:v_" + filter).sendGet();
             JSONObject jsonV = new JSONObject(responseV);
-            v += jsonV.getLong("total2");
+            if (jsonV.has("total2") && !jsonV.isNull("total2"))
+                v += jsonV.getLong("total2");
         }
-
-        return (double) t / v;
+        return divide(divide((double) t, (double) v), 60.0);
     }
 
     private int getSharesFacebook(String ... urls) throws Exception {
@@ -218,6 +216,12 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
         return Math.round(a * 100) / 100.0;
     }
 
+    private Double Subtraction(Double x, Double y) {
+        if (x == null || y == null)
+            return null;
+        return x - y;
+    }
+
     private Double multiply(Double x, Double y) {
         if (x == null || y == null)
             return null;
@@ -261,12 +265,15 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             Double totalTime = null;
             Double[] timeIntervals = new Double[Consts.TIME_INTERVAL_CF_IDS.size()];
             for (int i = 0; i < timeIntervals.length; i++) {
-                Double time = getTime(filter, publishingDate, scrollCounterIds[i], scrollCountersPassword);
-                if (time != null) {
-                    totalTime = (totalTime != null ? totalTime : 0) + time;
-                    timeIntervals[i] = time;
+                if (scrollCounterIds[i] != null) {
+                    Double time = getTime(filter, publishingDate, scrollCounterIds[i], scrollCountersPassword);
+                    if (time != null) {
+                        totalTime = (totalTime != null ? totalTime : 0) + time;
+                        timeIntervals[i] = time;
+                    }
                 }
             }
+            Double estimatedTime = (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.ESTIMATED_TIME_CF_ID));
 
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.HIT_COST_CF_ID), round(divide(cost, hits)));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_COST_CF_ID), round(divide(cost, shares.getTotal())));
@@ -289,6 +296,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.TOTAL_TIME_CF_ID), round(totalTime));
             for (int i = 0; i < Consts.TIME_INTERVAL_CF_IDS.size(); i++)
                 issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.TIME_INTERVAL_CF_IDS.get(i)), round(timeIntervals[i]));
+            issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.EXCESSIVE_TIME_CF_ID), round(Subtraction(totalTime, estimatedTime)));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.COMMENTS_CF_ID), getComments(url, apiUrl));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID), round(divide(shares.getTotal(), hits)));
             issue.setCustomFieldValue(CommonUtils.getCustomField(Consts.SHARE_RATIO_FACEBOOK_CF_ID), round(divide(shares.getFacebook(), hits)));

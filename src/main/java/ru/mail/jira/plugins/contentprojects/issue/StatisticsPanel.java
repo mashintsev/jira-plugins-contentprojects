@@ -16,7 +16,7 @@ import ru.mail.jira.plugins.contentprojects.statistics.Statistic;
 import java.util.*;
 
 public class StatisticsPanel implements ContextProvider {
-    private static final String JQL = "project = %d AND cf[%d] > \"-37d\"";
+    private static final String JQL = "project = %d AND issuetype = %s AND cf[%d] > \"-37d\"";
 
     private static final Logger log = Logger.getLogger(StatisticsPanel.class);
     private final List<CustomField> customFields;
@@ -110,7 +110,7 @@ public class StatisticsPanel implements ContextProvider {
         try {
             Issue issue = (Issue) paramMap.get("issue");
 
-            String jql = String.format(JQL, issue.getProjectObject().getId(), Consts.PUBLISHING_DATE_CF_ID);
+            String jql = String.format(JQL, issue.getProjectObject().getId(), issue.getIssueTypeId(), Consts.PUBLISHING_DATE_CF_ID);
             SearchService.ParseResult parseResult = searchService.parseQuery(jiraAuthenticationContext.getUser().getDirectoryUser(), jql);
             if (!parseResult.isValid())
                 throw new Exception(String.format("Unable to parse JQL, %s", parseResult.getErrors()));
