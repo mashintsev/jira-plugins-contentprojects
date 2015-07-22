@@ -46,6 +46,16 @@ public class StatisticsPanel implements ContextProvider {
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_GOOGLE_CF_ID),
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_YANDEX_CF_ID),
                 CommonUtils.getCustomField(Consts.HITS_SEARCH_ENGINES_OTHERS_CF_ID),
+                CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(0)),
+                CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(1)),
+                CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(2)),
+                CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(3)),
+                CommonUtils.getCustomField(Consts.SCROLL_CF_IDS.get(4)),
+                CommonUtils.getCustomField(Consts.TOTAL_TIME_CF_ID),
+                CommonUtils.getCustomField(Consts.TIME_INTERVAL_CF_IDS.get(0)),
+                CommonUtils.getCustomField(Consts.TIME_INTERVAL_CF_IDS.get(1)),
+                CommonUtils.getCustomField(Consts.TIME_INTERVAL_CF_IDS.get(2)),
+                CommonUtils.getCustomField(Consts.ESTIMATED_TIME_CF_ID),
                 CommonUtils.getCustomField(Consts.COMMENTS_CF_ID),
                 CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID),
                 CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID)
@@ -127,6 +137,16 @@ public class StatisticsPanel implements ContextProvider {
             fields.add(getDoubleField(fieldStatisticValues, 20, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 21, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 22, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 23, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 24, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 25, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 26, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 27, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 28, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 29, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 30, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 31, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 32, issue, true));
 
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("numberTool", new NumberTool(jiraAuthenticationContext.getI18nHelper().getLocale()));
