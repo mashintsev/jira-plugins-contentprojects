@@ -45,7 +45,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
         return new URL(url).getPath().replaceAll("/$", "");
     }
 
-    private int getHits(String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
+    private int getHits(String url, String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
         int result = 0;
 
         Calendar calendar = Calendar.getInstance();
@@ -59,7 +59,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             JSONArray elements = json.getJSONArray("elements");
             for (int i = 0; i < elements.length(); i++) {
                 JSONObject element = elements.getJSONObject(i);
-                if (getFilter(element.getString("url")).equals(filter))
+                if (element.getString("url").replaceAll("/$", "").equals(url.replaceAll("/$", "")))
                     result += element.getInt("value");
             }
         }
@@ -129,6 +129,28 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
         }
 
         return new SocialMedia(result[0], result[1], result[2], result[3], result[4]);
+    }
+
+    private int getScrolls(String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
+        int result = 0;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(publishingDate);
+        for (int day = 0; day < DAYS_COUNT; day++) {
+            String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+            calendar.add(Calendar.DATE, 1);
+
+            String response = new HttpSender("http://top.mail.ru/json/pages?id=%s&password=%s&period=0&date=%s&filter_type=0&filter=%s", counterId, counterPassword, date, filter).sendGet();
+            JSONObject json = new JSONObject(response);
+            JSONArray elements = json.getJSONArray("elements");
+            for (int i = 0; i < elements.length(); i++) {
+                JSONObject element = elements.getJSONObject(i);
+                if (getFilter(element.getString("url")).equals(filter))
+                    result += element.getInt("value");
+            }
+        }
+
+        return result;
     }
 
     private Double getTime(String filter, Date publishingDate, int counterId, String counterPassword) throws Exception {
@@ -252,7 +274,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             String scrollCountersPassword = pluginData.getScrollCountersPassword(issue.getProjectObject());
             String apiUrl = pluginData.getApiUrl(issue.getProjectObject());
 
-            double hits = getHits(filter, publishingDate, counterId, counterPassword);
+            double hits = getHits(url, filter, publishingDate, counterId, counterPassword);
             SocialMedia shares = getShares(url);
             SocialMedia hitsSocialMedia = getHitsSocialMedia(filter, publishingDate, counterId, counterPassword);
             SearchEngines hitsSearchEngines = getHitsSearchEngines(filter, publishingDate, counterId, counterPassword);
@@ -260,7 +282,7 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
             Double[] scrolls = new Double[Consts.SCROLL_CF_IDS.size()];
             for (int i = 0; i < scrolls.length; i++)
                 if (scrollCounterIds[i] != null && StringUtils.isNotEmpty(scrollCountersPassword))
-                    scrolls[i] = (double) getHits(filter, publishingDate, scrollCounterIds[i], scrollCountersPassword);
+                    scrolls[i] = (double) getScrolls(filter, publishingDate, scrollCounterIds[i], scrollCountersPassword);
 
             Double totalTime = null;
             Double[] timeIntervals = new Double[Consts.TIME_INTERVAL_CF_IDS.size()];
