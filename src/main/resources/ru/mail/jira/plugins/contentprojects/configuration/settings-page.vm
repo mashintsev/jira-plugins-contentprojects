@@ -24,34 +24,21 @@
 
 #macro( fieldError $name )
     #if( $action.hasErrors && $action.errors.get( $name ) )
-    <div class="error">$action.errors.get( $name )</div>
+        <div class="error">$action.errors.get( $name )</div>
     #end
 #end
 <form class="aui" action="ContentProjectsSettings.jspa" method="post">
     <input type="hidden" name="atl_token" value="$atl_token" />
     <input type="hidden" name="projectKey" value="$!projectKey" />
-    <div class="field-group">
-        <label for="counterId">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.counterId" )<span class="aui-icon icon-required"></span></label>
-        <input type="text" class="text" id="counterId" name="counterId" value="$!counterId" />
-        #fieldError( "counterId" )
-    </div>
-    <div class="field-group">
-        <label for="counterPassword">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.counterPassword" )<span class="aui-icon icon-required"></span></label>
-        <input type="password" class="password" id="counterPassword" name="counterPassword" value="$!counterPassword" />
-        #fieldError( "counterPassword" )
-    </div>
-    #foreach( $scrollCounterId in $scrollCounterIds )
+    #foreach( $counter in $counters )
+        #set( $index = $velocityCount - 1 )
         <div class="field-group">
-            <label for="scrollCounterId_$velocityCount">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.scrollCounterId", $velocityCount )</label>
-            <input type="text" class="text" id="scrollCounterId_$velocityCount" name="scrollCounterIds" value="$!scrollCounterId" />
-            #fieldError( "scrollCounterId_$velocityCount" )
+            <label for="counter_$index">$counter.name</label>
+            <input type="text" class="text" id="counter_$index" name="ratingIds" placeholder="$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.counterId" )" value="$!action.getArrayElement( $ratingIds, $index )" />
+            <input type="password" class="password" name="ratingPasswords" placeholder="$i18n.getText( "common.words.password" )" value="$!action.getArrayElement( $ratingPasswords, $index )" />
+            #fieldError( "counter_$index" )
         </div>
     #end
-    <div class="field-group">
-        <label for="scrollCountersPassword">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.scrollCountersPassword" )</label>
-        <input type="password" class="password" id="scrollCountersPassword" name="scrollCountersPassword" value="$!scrollCountersPassword" />
-        #fieldError( "scrollCountersPassword" )
-    </div>
     <div class="field-group">
         <label for="apiUrl">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.apiUrl" )</label>
         <input type="text" class="text" id="apiUrl" name="apiUrl" value="$!apiUrl" />

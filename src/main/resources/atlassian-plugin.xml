@@ -14,6 +14,8 @@
     <component-import key="ao" interface="com.atlassian.activeobjects.external.ActiveObjects" />
     <ao key="ao-entities">
         <entity>ru.mail.jira.plugins.contentprojects.authors.freelancers.Freelancer</entity>
+        <entity>ru.mail.jira.plugins.contentprojects.configuration.Counter</entity>
+        <entity>ru.mail.jira.plugins.contentprojects.configuration.CounterConfig</entity>
     </ao>
 
     <!-- Authors -->
@@ -71,6 +73,8 @@
 
     <component-import key="plugin-settings-factory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
     <component key="plugin-data" class="ru.mail.jira.plugins.contentprojects.configuration.PluginData" />
+
+    <component key="counter-manager" class="ru.mail.jira.plugins.contentprojects.configuration.CounterManager" />
 
     <web-section key="contentprojects-section" location="atl.jira.proj.config">
         <conditions type="AND">
@@ -213,6 +217,14 @@
         <description key="ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" />
         <function-class>ru.mail.jira.plugins.contentprojects.issue.CollectStatisticsFunction</function-class>
         <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" )]]></resource>
+    </workflow-function>
+
+    <workflow-function key="hits-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.functions.hits.name" class="ru.mail.jira.plugins.contentprojects.issue.functions.HitsFunctionFactory">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.functions.hits.description" />
+        <function-class>ru.mail.jira.plugins.contentprojects.issue.functions.HitsFunction</function-class>
+        <resource type="velocity" name="view" location="ru/mail/jira/plugins/contentprojects/issue/functions/hits-function-view.vm" />
+        <resource type="velocity" name="input-parameters" location="ru/mail/jira/plugins/contentprojects/issue/functions/hits-function-edit.vm" />
+        <resource type="velocity" name="edit-parameters" location="ru/mail/jira/plugins/contentprojects/issue/functions/hits-function-edit.vm" />
     </workflow-function>
 
     <web-resource key="statistics-panel-resource">

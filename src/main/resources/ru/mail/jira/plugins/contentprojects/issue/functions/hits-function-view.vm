@@ -1,0 +1,1 @@
+$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.functions.hits.view", "<strong>$resultField</strong>", "<strong>$counter</strong>", "<strong>$urlField</strong>", "<strong>$dateField</strong>", "<strong>$numberOfDays</strong>" )

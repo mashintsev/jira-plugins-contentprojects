@@ -6,27 +6,22 @@ import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.xsrf.RequiresXsrfCheck;
 import com.atlassian.jira.web.action.JiraWebActionSupport;
-import org.apache.commons.lang.StringUtils;
-import ru.mail.jira.plugins.contentprojects.common.Consts;
-import webwork.action.ServletActionContext;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 
 public class ContentProjectsSettingsAction extends JiraWebActionSupport {
+    private final CounterManager counterManager;
     private final PermissionManager permissionManager;
     private final PluginData pluginData;
     private final ProjectManager projectManager;
 
     private boolean saved;
     private Project project;
-    private Integer counterId;
-    private String counterPassword;
-    private Integer[] scrollCounterIds = new Integer[Consts.SCROLL_CF_IDS.size()];
-    private String scrollCountersPassword;
+    private String[] ratingIds;
+    private String[] ratingPasswords;
     private String apiUrl;
 
-    public ContentProjectsSettingsAction(PermissionManager permissionManager, PluginData pluginData, ProjectManager projectManager) {
+    public ContentProjectsSettingsAction(CounterManager counterManager, PermissionManager permissionManager, PluginData pluginData, ProjectManager projectManager) {
+        this.counterManager = counterManager;
         this.permissionManager = permissionManager;
         this.pluginData = pluginData;
         this.projectManager = projectManager;
@@ -36,50 +31,71 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
         return permissionManager.hasPermission(ProjectPermissions.ADMINISTER_PROJECTS, project, getLoggedInApplicationUser());
     }
 
-    private String sendError(int code) throws IOException {
-        if (ServletActionContext.getResponse() != null)
-            ServletActionContext.getResponse().sendError(code);
-        return NONE;
-    }
-
     @Override
     public String doDefault() throws Exception {
-        if (project == null)
-            return sendError(HttpServletResponse.SC_BAD_REQUEST);
         if (!isUserAllowed())
-            return sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return NONE;
 
-        counterId = pluginData.getCounterId(project);
-        counterPassword = pluginData.getCounterPassword(project);
-        scrollCounterIds = pluginData.getScrollCounterIds(project);
-        scrollCountersPassword = pluginData.getScrollCountersPassword(project);
+        if (project == null)
+            return NONE;
+
+        Counter[] counters = counterManager.getCounters();
+        ratingIds = new String[counters.length];
+        ratingPasswords = new String[counters.length];
+        for (int i = 0; i < counters.length; i++) {
+            CounterConfig counterConfig = counterManager.getCounterConfig(counters[i], project);
+            if (counterConfig != null) {
+                ratingIds[i] = counterConfig.getRatingId() == null ? null : String.valueOf(counterConfig.getRatingId());
+                ratingPasswords[i] = counterConfig.getRatingPassword();
+            }
+        }
+
         apiUrl = pluginData.getApiUrl(project);
+
         return INPUT;
+    }
+
+    private Integer getInteger(String s) throws NumberFormatException {
+        if (StringUtils.isEmpty(s))
+            return null;
+        return Integer.valueOf(s);
     }
 
     @Override
     protected void doValidation() {
-        if (project == null)
-            addErrorMessage("Project is not specified.");
-        if (counterId == null)
-            addError("counterId", getText("issue.field.required", getText("ru.mail.jira.plugins.contentprojects.configuration.settings.counterId")));
-        if (StringUtils.isEmpty(counterPassword))
-            addError("counterPassword", getText("issue.field.required", getText("ru.mail.jira.plugins.contentprojects.configuration.settings.counterPassword")));
+        for (int i = 0; i < ratingIds.length; i++)
+            try {
+                getInteger(ratingIds[i]);
+            } catch (IllegalArgumentException e) {
+                addError(String.format("counter_%d", i), getText("ru.mail.jira.plugins.contentprojects.configuration.settings.illegalCounterId"));
+            }
     }
 
     @RequiresXsrfCheck
     @Override
     public String doExecute() throws Exception {
         if (!isUserAllowed())
-            return sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return NONE;
 
         saved = true;
-        pluginData.setCounterId(project, counterId);
-        pluginData.setCounterPassword(project, counterPassword);
-        pluginData.setScrollCounterIds(project, scrollCounterIds);
-        pluginData.setScrollCountersPassword(project, scrollCountersPassword);
+
+        if (project == null)
+            return NONE;
+
+        Counter[] counters = counterManager.getCounters();
+        if (ratingIds == null || ratingIds.length != counters.length || ratingPasswords == null || ratingPasswords.length != counters.length)
+            return NONE;
+        for (int i = 0; i < counters.length; i++)
+            counterManager.setCounterConfig(counters[i], project, getInteger(ratingIds[i]), ratingPasswords[i]);
+
         pluginData.setApiUrl(project, apiUrl);
+
         return INPUT;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public <T> T getArrayElement(T[] a, int i) {
+        return a[i];
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -98,43 +114,28 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public Integer getCounterId() {
-        return counterId;
+    public Counter[] getCounters() {
+        return counterManager.getCounters();
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public void setCounterId(Integer counterId) {
-        this.counterId = counterId;
+    public String[] getRatingIds() {
+        return ratingIds;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public String getCounterPassword() {
-        return counterPassword;
+    public void setRatingIds(String[] ratingIds) {
+        this.ratingIds = ratingIds;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public void setCounterPassword(String counterPassword) {
-        this.counterPassword = counterPassword;
+    public String[] getRatingPasswords() {
+        return ratingPasswords;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public Integer[] getScrollCounterIds() {
-        return scrollCounterIds;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public void setScrollCounterIds(Integer[] scrollCounterIds) {
-        this.scrollCounterIds = scrollCounterIds;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public String getScrollCountersPassword() {
-        return scrollCountersPassword;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public void setScrollCountersPassword(String scrollCountersPassword) {
-        this.scrollCountersPassword = scrollCountersPassword;
+    public void setRatingPasswords(String[] ratingPasswords) {
+        this.ratingPasswords = ratingPasswords;
     }
 
     @SuppressWarnings("UnusedDeclaration")

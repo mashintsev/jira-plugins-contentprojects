@@ -52,16 +52,8 @@ public class PluginData {
         return getInteger(project, COUNTER_ID);
     }
 
-    public void setCounterId(Project project, Integer value) {
-        set(project, COUNTER_ID, value);
-    }
-
     public String getCounterPassword(Project project) {
         return getString(project, COUNTER_PASSWORD);
-    }
-
-    public void setCounterPassword(Project project, String value) {
-        set(project, COUNTER_PASSWORD, value);
     }
 
     public Integer[] getScrollCounterIds(Project project) {
@@ -71,17 +63,8 @@ public class PluginData {
         return result;
     }
 
-    public void setScrollCounterIds(Project project, Integer[] value) {
-        for (int i = 0; i < value.length; i++)
-            set(project, SCROLL_COUNTER_IDS + i, value[i]);
-    }
-
     public String getScrollCountersPassword(Project project) {
         return getString(project, SCROLL_COUNTERS_PASSWORD);
-    }
-
-    public void setScrollCountersPassword(Project project, String value) {
-        set(project, SCROLL_COUNTERS_PASSWORD, value);
     }
 
     public String getApiUrl(Project project) {
