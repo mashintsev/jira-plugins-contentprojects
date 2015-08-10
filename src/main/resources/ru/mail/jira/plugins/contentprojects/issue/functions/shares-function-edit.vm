@@ -1,0 +1,7 @@
+#parse( "ru/mail/jira/plugins/contentprojects/issue/functions/macro.vm" )
+#customField( "facebookField", $facebookField )
+#customField( "myMailField", $myMailField )
+#customField( "odnoklassnikiField", $odnoklassnikiField )
+#customField( "twitterField", $twitterField )
+#customField( "vkontakteField", $vkontakteField )
+#customField( "urlField", $urlField )

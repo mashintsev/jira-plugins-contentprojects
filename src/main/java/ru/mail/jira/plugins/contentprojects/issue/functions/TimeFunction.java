@@ -3,7 +3,6 @@ package ru.mail.jira.plugins.contentprojects.issue.functions;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.security.JiraAuthenticationContext;
-import com.atlassian.jira.util.json.JSONArray;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.opensymphony.module.propertyset.PropertySet;
@@ -20,17 +19,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-public class HitsFunction extends AbstractJiraFunctionProvider {
+public class TimeFunction extends AbstractJiraFunctionProvider {
     private final CounterManager counterManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public HitsFunction(CounterManager counterManager, JiraAuthenticationContext jiraAuthenticationContext) {
+    public TimeFunction(CounterManager counterManager, JiraAuthenticationContext jiraAuthenticationContext) {
         this.counterManager = counterManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
-    private int getHits(String filter, Date publishingDate, int numberOfDays, int counterId, String counterPassword) throws Exception {
-        int result = 0;
+    private Double getTime(String filter, Date publishingDate, int numberOfDays, int counterId, String counterPassword) throws Exception {
+        long t = 0, v = 0;
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(publishingDate);
@@ -38,17 +37,20 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
             calendar.add(Calendar.DATE, 1);
 
-            String response = new HttpSender("http://top.mail.ru/json/pages?id=%s&password=%s&period=0&date=%s&filter_type=0&filter=%s", counterId, counterPassword, date, filter).sendGet();
-            JSONObject json = new JSONObject(response);
-            JSONArray elements = json.getJSONArray("elements");
-            for (int i = 0; i < elements.length(); i++) {
-                JSONObject element = elements.getJSONObject(i);
-                if (AbstractFunctionFactory.getFilter(element.getString("url")).equals(filter))
-                    result += element.getInt("value");
-            }
+            String responseT = new HttpSender("http://top.mail.ru/json/goals?id=%s&password=%s&period=0&date=%s&goal=%s", counterId, counterPassword, date, "jse:t_" + filter).sendGet();
+            JSONObject jsonT = new JSONObject(responseT);
+            if (jsonT.has("total2") && !jsonT.isNull("total2"))
+                t += jsonT.getLong("total2");
+
+            String responseV = new HttpSender("http://top.mail.ru/json/goals?id=%s&password=%s&period=0&date=%s&goal=%s", counterId, counterPassword, date, "jse:v_" + filter).sendGet();
+            JSONObject jsonV = new JSONObject(responseV);
+            if (jsonV.has("total2") && !jsonV.isNull("total2"))
+                v += jsonV.getLong("total2");
         }
 
-        return result;
+        if (v == 0)
+            return null;
+        return AbstractFunctionFactory.round((double) t / v / 60);
     }
 
     @Override
@@ -56,7 +58,7 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
         MutableIssue issue = getIssue(transientVars);
 
         CustomField publishingDateCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.PUBLISHING_DATE_FIELD));
-        CustomField hitsCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.HITS_FIELD));
+        CustomField timeCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.TIME_FIELD));
         CustomField urlCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.URL_FIELD));
         Counter counter = counterManager.getCounter(Integer.parseInt((String) args.get(AbstractFunctionFactory.COUNTER)));
         int numberOfDays = Integer.parseInt((String) args.get(AbstractFunctionFactory.NUMBER_OF_DAYS));
@@ -71,8 +73,8 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
 
         try {
-            int hits = getHits(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
-            issue.setCustomFieldValue(hitsCf, (double) hits);
+            Double time = getTime(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
+            issue.setCustomFieldValue(timeCf, time);
         } catch (Exception e) {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
         }

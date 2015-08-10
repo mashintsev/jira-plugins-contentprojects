@@ -1,0 +1,8 @@
+$i18n.getText(
+    "ru.mail.jira.plugins.contentprojects.issue.functions.apiData.view",
+    "<strong>$categoryField</strong>",
+    "<strong>$publishingDateField</strong>",
+    "<strong>$estimatedTimeField</strong>",
+    "<strong>$commentsField</strong>",
+    "<strong>$urlField</strong>"
+)

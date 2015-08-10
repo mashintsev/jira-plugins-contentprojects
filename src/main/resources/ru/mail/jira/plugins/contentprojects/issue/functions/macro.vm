@@ -1,0 +1,40 @@
+#macro( customField $id $value )
+    <tr>
+        <td class="fieldLabelArea">
+            <label for="contentprojects-$id">$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.functions.$id" ):</label>
+        </td>
+        <td>
+            <select id="contentprojects-$id" name="$id">
+                #foreach( $customField in $customFields )
+                    <option value="$customField.id"#if( $value == $customField.id ) selected="selected"#end>$customField.name</option>
+                #end
+            </select>
+        </td>
+    </tr>
+#end
+
+#macro( counter $id $value )
+    <tr>
+        <td class="fieldLabelArea">
+            <label for="contentprojects-$id">$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.functions.$id" ):</label>
+        </td>
+        <td>
+            <select id="contentprojects-$id" name="$id">
+                #foreach( $counter in $counters )
+                    <option value="$counter.getID()"#if( $value == $counter.getID() ) selected="selected"#end>$counter.name</option>
+                #end
+            </select>
+        </td>
+    </tr>
+#end
+
+#macro( numberOfDays $id $value )
+    <tr>
+        <td class="fieldLabelArea">
+            <label for="contentprojects-$id">$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.functions.$id" ):</label>
+        </td>
+        <td>
+            <input type="number" min="1" max="30" required="required" id="contentprojects-$id" name="$id" value="#if( $value )$value#{else}7#end">
+        </td>
+    </tr>
+#end

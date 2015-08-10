@@ -1,0 +1,9 @@
+$i18n.getText(
+    "ru.mail.jira.plugins.contentprojects.issue.functions.shares.view",
+    "<strong>$facebookField</strong>",
+    "<strong>$myMailField</strong>",
+    "<strong>$odnoklassnikiField</strong>",
+    "<strong>$twitterField</strong>",
+    "<strong>$vkontakteField</strong>",
+    "<strong>$urlField</strong>"
+)

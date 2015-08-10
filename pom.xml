@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.mail.jira.plugins</groupId>
     <artifactId>contentprojects</artifactId>
-    <version>1.7.107</version>
+    <version>1.7.108</version>
 
     <organization>
         <name>Andrey Molchanov | Mail.Ru Group</name>
@@ -14,7 +14,7 @@
     </organization>
 
     <name>Content Projects</name>
-    <description>Supplement modules for CP projects.</description>
+    <description>Content statistic data collecting and analyzing.</description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencies>

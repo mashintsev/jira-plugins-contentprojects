@@ -1,0 +1,6 @@
+#parse( "ru/mail/jira/plugins/contentprojects/issue/functions/macro.vm" )
+#customField( "categoryField", $categoryField )
+#customField( "publishingDateField", $publishingDateField )
+#customField( "estimatedTimeField", $estimatedTimeField )
+#customField( "commentsField", $commentsField )
+#customField( "urlField", $urlField )

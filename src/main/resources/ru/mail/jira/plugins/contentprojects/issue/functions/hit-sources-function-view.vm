@@ -1,0 +1,15 @@
+$i18n.getText(
+    "ru.mail.jira.plugins.contentprojects.issue.functions.hitSources.view",
+    "<strong>$facebookField</strong>",
+    "<strong>$myMailField</strong>",
+    "<strong>$odnoklassnikiField</strong>",
+    "<strong>$twitterField</strong>",
+    "<strong>$vkontakteField</strong>",
+    "<strong>$googleField</strong>",
+    "<strong>$yandexField</strong>",
+    "<strong>$otherSearchEnginesField</strong>",
+    "<strong>$counter</strong>",
+    "<strong>$urlField</strong>",
+    "<strong>$publishingDateField</strong>",
+    "<strong>$numberOfDays</strong>"
+)

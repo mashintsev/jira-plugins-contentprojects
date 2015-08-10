@@ -1,5 +1,5 @@
 #parse( "ru/mail/jira/plugins/contentprojects/issue/functions/macro.vm" )
-#customField( "hitsField", $hitsField )
+#customField( "timeField", $timeField )
 #counter( "counter", $counter )
 #customField( "urlField", $urlField )
 #customField( "publishingDateField", $publishingDateField )

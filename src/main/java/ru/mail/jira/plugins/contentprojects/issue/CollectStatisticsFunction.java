@@ -10,18 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.HttpSender;
-import ru.mail.jira.plugins.commons.RestExecutor;
 import ru.mail.jira.plugins.contentprojects.common.Consts;
 import ru.mail.jira.plugins.contentprojects.configuration.PluginData;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -29,8 +20,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Produces({ MediaType.APPLICATION_JSON })
-@Path("/collectStatistics")
 public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
     private static final int DAYS_COUNT = 7;
 
@@ -335,46 +324,6 @@ public class CollectStatisticsFunction extends AbstractJiraFunctionProvider {
         } catch (Exception e) {
             log.error(e);
             throw new WorkflowException(e);
-        }
-    }
-
-    @GET
-    @Path("/shares")
-    public Response getSharesJson(@QueryParam("url") final String url) {
-        return new RestExecutor<SocialMediaOutput>() {
-            @Override
-            protected SocialMediaOutput doAction() throws Exception {
-                return new SocialMediaOutput(getShares(url));
-            }
-        }.getResponse();
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @XmlRootElement
-    public static class SocialMediaOutput {
-        @XmlElement
-        private double total;
-        @XmlElement
-        private double facebook;
-        @XmlElement
-        private double mymail;
-        @XmlElement
-        private double odnoklassniki;
-        @XmlElement
-        private double twitter;
-        @XmlElement
-        private double vkontakte;
-
-        private SocialMediaOutput() {
-        }
-
-        public SocialMediaOutput(SocialMedia socialMedia) {
-            this.total = socialMedia.getTotal();
-            this.facebook = socialMedia.getFacebook();
-            this.mymail = socialMedia.getMymail();
-            this.odnoklassniki = socialMedia.getOdnoklassniki();
-            this.twitter = socialMedia.getTwitter();
-            this.vkontakte = socialMedia.getVkontakte();
         }
     }
 }
