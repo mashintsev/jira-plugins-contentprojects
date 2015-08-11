@@ -104,9 +104,9 @@ var gadget = AJS.Gadget({
                         html += '<a href="' + gadget.getBaseUrl() + args.data.groups[i].url + '" target="_parent">' + gadget.getMsg('common.concepts.issues') + ': <strong>' + args.data.groups[i].issueCount + '</strong></a>';
                         html += '</td>';
                     }
-                    html += '<th>' + gadget.getMsg('ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.median') + '<br />' + gadget.getMsg('ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.mean') + '<br />' + gadget.getMsg('ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.sum') + '</th>';
+                    html += '<th>' + gadget.getMsg('ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.median') + '<br />' + gadget.getMsg('ru.mail.jira.plugins.contentprojects.gadgets.numberFieldStatistics.mean') + '</th>';
                     for (var j = 0; j < args.data.groups[i].fieldStatisticValues.length; j++)
-                        html += '<td>' + (args.data.groups[i].fieldStatisticValues[j] ? args.data.groups[i].fieldStatisticValues[j].median + '<br />' + args.data.groups[i].fieldStatisticValues[j].mean + '<br />' + args.data.groups[i].fieldStatisticValues[j].sum : '') + '</td>';
+                        html += '<td>' + (args.data.groups[i].fieldStatisticValues[j] ? args.data.groups[i].fieldStatisticValues[j].median + '<br />' + args.data.groups[i].fieldStatisticValues[j].mean : '') + '</td>';
                     html += '</tr>';
                 }
                 html += '</tbody>';

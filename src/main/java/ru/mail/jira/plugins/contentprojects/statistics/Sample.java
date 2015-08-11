@@ -51,14 +51,14 @@ public class Sample {
             if (customFieldSample.isEmpty()) {
                 result.add(null);
             } else {
+                Collections.sort(customFieldSample);
+                double median = customFieldSample.get(customFieldSample.size() / 2);
+
                 double sum = 0;
                 for (Double value : customFieldSample)
                     sum += value;
 
-                Collections.sort(customFieldSample);
-                double median = customFieldSample.get(customFieldSample.size() / 2);
-
-                result.add(new Statistic(median, sum / customFieldSample.size(), sum));
+                result.add(new Statistic(median, sum / customFieldSample.size()));
             }
         return result;
     }

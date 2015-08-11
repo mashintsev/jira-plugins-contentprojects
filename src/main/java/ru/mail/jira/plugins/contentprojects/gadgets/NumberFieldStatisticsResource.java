@@ -2,7 +2,6 @@ package ru.mail.jira.plugins.contentprojects.gadgets;
 
 import com.atlassian.jira.bc.issue.search.SearchService;
 import com.atlassian.jira.charts.util.ChartUtils;
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.fields.*;
 import com.atlassian.jira.issue.search.SearchException;
@@ -19,7 +18,6 @@ import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.query.Query;
 import org.apache.commons.lang3.StringUtils;
 import ru.mail.jira.plugins.commons.RestExecutor;
-import ru.mail.jira.plugins.contentprojects.common.Consts;
 import ru.mail.jira.plugins.contentprojects.statistics.Sample;
 import ru.mail.jira.plugins.contentprojects.statistics.SampleAccessor;
 import ru.mail.jira.plugins.contentprojects.statistics.Statistic;
@@ -156,11 +154,8 @@ public class NumberFieldStatisticsResource {
                                 if (statisticValues2 == null)
                                     return -1;
                                 int result = Double.compare(statisticValues1.getMedian(), statisticValues2.getMedian());
-                                if (result == 0) {
+                                if (result == 0)
                                     result = Double.compare(statisticValues1.getMean(), statisticValues2.getMean());
-                                    if (result == 0)
-                                        result = Double.compare(statisticValues1.getSum(), statisticValues2.getSum());
-                                }
                                 return result;
                             }
                         });

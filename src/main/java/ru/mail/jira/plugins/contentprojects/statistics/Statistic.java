@@ -11,27 +11,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Statistic {
     private double medianValue;
     private double meanValue;
-    private double sumValue;
 
     @XmlElement
     private String median;
     @XmlElement
     private String mean;
-    @XmlElement
-    private String sum;
 
     private Statistic() {
     }
 
-    public Statistic(double median, double mean, double sum) {
+    public Statistic(double median, double mean) {
         this.medianValue = median;
         this.meanValue = mean;
-        this.sumValue = sum;
 
         NumberTool numberTool = new NumberTool(ComponentAccessor.getJiraAuthenticationContext().getLocale());
         this.median = numberTool.format(median);
         this.mean = numberTool.format(mean);
-        this.sum = numberTool.format(sum);
     }
 
     public double getMedian() {
@@ -40,9 +35,5 @@ public class Statistic {
 
     public double getMean() {
         return meanValue;
-    }
-
-    public double getSum() {
-        return sumValue;
     }
 }
