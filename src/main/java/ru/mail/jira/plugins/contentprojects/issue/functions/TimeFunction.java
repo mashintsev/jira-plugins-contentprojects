@@ -66,6 +66,8 @@ public class TimeFunction extends AbstractJiraFunctionProvider {
         CounterConfig counterConfig = counterManager.getCounterConfig(counter, issue.getProjectObject());
         if (counterConfig == null || counterConfig.getRatingId() == null)
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredCounterError", counter.getName()));
+        if (counterConfig.getRatingId() == 0)
+            return;
 
         Date publishingDate = (Date) issue.getCustomFieldValue(publishingDateCf);
         String url = (String) issue.getCustomFieldValue(urlCf);
