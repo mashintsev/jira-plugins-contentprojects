@@ -8,7 +8,10 @@ $i18n.getText(
     "<strong>$googleField</strong>",
     "<strong>$yandexField</strong>",
     "<strong>$otherSearchEnginesField</strong>",
-    "<strong>$counter</strong>",
+    "<strong>$counter</strong>"
+)
+$i18n.getText(
+    "ru.mail.jira.plugins.contentprojects.issue.functions.dataIsFilteredAndTaken",
     "<strong>$urlField</strong>",
     "<strong>$publishingDateField</strong>",
     "<strong>$numberOfDays</strong>"
