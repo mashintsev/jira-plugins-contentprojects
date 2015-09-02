@@ -44,6 +44,11 @@
         <input type="text" class="text" id="apiUrl" name="apiUrl" value="$!apiUrl" />
         #fieldError( "apiUrl" )
     </div>
+    <div class="field-group">
+        <label for="newsApiUrl">$i18n.getText( "ru.mail.jira.plugins.contentprojects.configuration.settings.newsApiUrl" )</label>
+        <input type="text" class="text" id="newsApiUrl" name="newsApiUrl" value="$!newsApiUrl" />
+        #fieldError( "newsApiUrl" )
+    </div>
     <div class="buttons-container">
         <div class="buttons">
             <input type="submit" class="aui-button" value="$action.getText( "common.words.save" )" />

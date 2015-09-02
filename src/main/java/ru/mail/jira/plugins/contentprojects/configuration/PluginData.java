@@ -3,15 +3,11 @@ package ru.mail.jira.plugins.contentprojects.configuration;
 import com.atlassian.jira.issue.customfields.option.Option;
 import com.atlassian.jira.project.Project;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import ru.mail.jira.plugins.contentprojects.common.Consts;
 
 public class PluginData {
     private static final String PLUGIN_PREFIX = "ru.mail.jira.plugins.contentprojects:";
-    private static final String COUNTER_ID = PLUGIN_PREFIX + "counterId";
-    private static final String COUNTER_PASSWORD = PLUGIN_PREFIX + "counterPassword";
-    private static final String SCROLL_COUNTER_IDS = PLUGIN_PREFIX + "scrollCounterIds_";
-    private static final String SCROLL_COUNTERS_PASSWORD = PLUGIN_PREFIX + "scrollCountersPassword";
     private static final String API_URL = PLUGIN_PREFIX + "apiUrl";
+    private static final String NEWS_API_URL = PLUGIN_PREFIX + "newsApiUrl";
     private static final String BUDGET_VALUE = PLUGIN_PREFIX + "budgetValue_";
     private static final String BUDGET_COST = PLUGIN_PREFIX + "budgetCost_";
     private static final String ACT_CREATED = PLUGIN_PREFIX + "actGenerated_";
@@ -48,31 +44,20 @@ public class PluginData {
 
     /* Project Settings */
 
-    public Integer getCounterId(Project project) {
-        return getInteger(project, COUNTER_ID);
-    }
-
-    public String getCounterPassword(Project project) {
-        return getString(project, COUNTER_PASSWORD);
-    }
-
-    public Integer[] getScrollCounterIds(Project project) {
-        Integer[] result = new Integer[Consts.SCROLL_CF_IDS.size()];
-        for (int i = 0; i < result.length; i++)
-            result[i] = getInteger(project, SCROLL_COUNTER_IDS + i);
-        return result;
-    }
-
-    public String getScrollCountersPassword(Project project) {
-        return getString(project, SCROLL_COUNTERS_PASSWORD);
-    }
-
     public String getApiUrl(Project project) {
         return getString(project, API_URL);
     }
 
     public void setApiUrl(Project project, String value) {
         set(project, API_URL, value);
+    }
+
+    public String getNewsApiUrl(Project project) {
+        return getString(project, NEWS_API_URL);
+    }
+
+    public void setNewsApiUrl(Project project, String value) {
+        set(project, NEWS_API_URL, value);
     }
 
     public Integer getBudgetValue(Project project, Option option) {

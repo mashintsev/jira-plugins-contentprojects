@@ -144,6 +144,11 @@
         </actions>
     </webwork1>
 
+    <component-import key="scheduler-service" interface="com.atlassian.scheduler.SchedulerService" />
+    <component key="news-scheduler" class="ru.mail.jira.plugins.contentprojects.extras.NewsScheduler" public="true">
+        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+    </component>
+
     <!-- Gadgets -->
 
     <web-resource key="number-field-statistics-resource">
@@ -206,18 +211,6 @@
         <validator-class>ru.mail.jira.plugins.contentprojects.issue.PaymentMonthIsOpenValidator</validator-class>
         <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.paymentMonthIsOpen.description" )]]></resource>
     </workflow-validator>
-
-    <workflow-function key="material-published-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.materialPublished.name" class="com.atlassian.jira.plugin.workflow.WorkflowNoInputPluginFactory">
-        <description key="ru.mail.jira.plugins.contentprojects.issue.materialPublished.description" />
-        <function-class>ru.mail.jira.plugins.contentprojects.issue.MaterialPublishedFunction</function-class>
-        <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.materialPublished.description" )]]></resource>
-    </workflow-function>
-
-    <workflow-function key="collect-statistics-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.collectStatistics.name" class="com.atlassian.jira.plugin.workflow.WorkflowNoInputPluginFactory">
-        <description key="ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" />
-        <function-class>ru.mail.jira.plugins.contentprojects.issue.CollectStatisticsFunction</function-class>
-        <resource type="velocity" name="view"><![CDATA[$i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.collectStatistics.description" )]]></resource>
-    </workflow-function>
 
     <workflow-function key="api-data-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.functions.apiData.name" class="ru.mail.jira.plugins.contentprojects.issue.functions.AbstractFunctionFactory">
         <description key="ru.mail.jira.plugins.contentprojects.issue.functions.apiData.description" />

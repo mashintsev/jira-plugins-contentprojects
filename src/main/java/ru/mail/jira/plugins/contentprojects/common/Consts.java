@@ -5,7 +5,7 @@ import java.util.*;
 public class Consts {
     public static final Collection<String> ACCOUNTANTS_GROUPS = Arrays.asList("cp-accountants", "cp-leads", "jira-administrators");
     public static final String AUTHORS_ROLE_NAME = "Developers";
-    public static final Collection<Long> PROJECT_IDS = Arrays.asList(19070L, 19170L, 19270L, 19271L, 19272L, 19273L, 19274L);
+    public static final Collection<Long> PROJECT_IDS = Arrays.asList(19070L, 19170L, 19270L, 19271L, 19272L, 19273L, 19274L, 21670L, 21671L);
     public static final Collection<String> STATUS_SPENT_IDS = Arrays.asList("11593", "11594", "11595");
     public static final Collection<String> STATUS_PLANNED_IDS = Arrays.asList("11395", "11592");
 
@@ -39,20 +39,12 @@ public class Consts {
     public static final long TOTAL_TIME_CF_ID = 27602;
     public static final List<Long> TIME_INTERVAL_CF_IDS = Arrays.asList(27603L, 27604L, 27605L);
     public static final long ESTIMATED_TIME_CF_ID = 27700;
-    public static final long EXCESSIVE_TIME_CF_ID = 27701;
     public static final long COMMENTS_CF_ID = 25401;
     public static final long SHARE_RATIO_CF_ID = 27109;
-    public static final long SHARE_RATIO_FACEBOOK_CF_ID = 27110;
-    public static final long SHARE_RATIO_MYMAIL_CF_ID = 27111;
-    public static final long SHARE_RATIO_ODNOKLASSNIKI_CF_ID = 27112;
-    public static final long SHARE_RATIO_TWITTER_CF_ID = 27113;
-    public static final long SHARE_RATIO_VKONTAKTE_CF_ID = 27114;
     public static final long SOCIAL_ENGAGEMENT_CF_ID = 27103;
-    public static final long SOCIAL_ENGAGEMENT_FACEBOOK_CF_ID = 27104;
-    public static final long SOCIAL_ENGAGEMENT_MYMAIL_CF_ID = 27105;
-    public static final long SOCIAL_ENGAGEMENT_ODNOKLASSNIKI_CF_ID = 27106;
-    public static final long SOCIAL_ENGAGEMENT_TWITTER_CF_ID = 27107;
-    public static final long SOCIAL_ENGAGEMENT_VKONTAKTE_CF_ID = 27108;
+
+    public static final String NEWS_USER_NAME = "s.paranjko@mail.msk";
+    public static final long NEWS_ISSUE_TYPE_ID = 13904;
 
     public static final long PAYMENT_ACT_PROJECT_ID = 12471;
     public static final long PAYMENT_ACT_ISSUE_TYPE_ID = 13400;

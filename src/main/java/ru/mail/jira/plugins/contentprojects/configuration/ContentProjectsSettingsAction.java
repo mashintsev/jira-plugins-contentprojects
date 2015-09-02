@@ -19,6 +19,7 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
     private String[] ratingIds;
     private String[] ratingPasswords;
     private String apiUrl;
+    private String newsApiUrl;
 
     public ContentProjectsSettingsAction(CounterManager counterManager, PermissionManager permissionManager, PluginData pluginData, ProjectManager projectManager) {
         this.counterManager = counterManager;
@@ -51,6 +52,7 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
         }
 
         apiUrl = pluginData.getApiUrl(project);
+        newsApiUrl = pluginData.getNewsApiUrl(project);
 
         return INPUT;
     }
@@ -89,6 +91,7 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
             counterManager.setCounterConfig(counters[i], project, getInteger(ratingIds[i]), ratingPasswords[i]);
 
         pluginData.setApiUrl(project, apiUrl);
+        pluginData.setNewsApiUrl(project, newsApiUrl);
 
         return INPUT;
     }
@@ -146,5 +149,15 @@ public class ContentProjectsSettingsAction extends JiraWebActionSupport {
     @SuppressWarnings("UnusedDeclaration")
     public void setApiUrl(String apiUrl) {
         this.apiUrl = apiUrl;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public String getNewsApiUrl() {
+        return newsApiUrl;
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    public void setNewsApiUrl(String newsApiUrl) {
+        this.newsApiUrl = newsApiUrl;
     }
 }

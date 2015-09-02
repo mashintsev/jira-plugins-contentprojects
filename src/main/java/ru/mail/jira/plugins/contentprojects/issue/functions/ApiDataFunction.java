@@ -50,7 +50,7 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
             String lead = data.getString("lead");
             String category = data.getString("category");
             long publishingDate = data.getLong("published") * 1000;
-            Double estimatedTime = AbstractFunctionFactory.round(data.getLong("words_count") / 140.0);
+            Double estimatedTime = data.has("words_count") ? AbstractFunctionFactory.round(data.getLong("words_count") / 140.0) : null;
             int comments = data.getInt("comments_count");
 
             issue.setSummary(title);
