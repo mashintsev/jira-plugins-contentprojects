@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.mail.jira.plugins</groupId>
     <artifactId>contentprojects</artifactId>
-    <version>1.8.114</version>
+    <version>1.8.116</version>
 
     <organization>
         <name>Andrey Molchanov | Mail.Ru Group</name>

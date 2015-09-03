@@ -5,6 +5,7 @@ import com.atlassian.jira.config.LocaleManager;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.IssueInputParameters;
+import com.atlassian.jira.issue.customfields.converters.DoubleConverter;
 import com.atlassian.jira.issue.search.SearchProvider;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
@@ -55,6 +56,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     private static final Logger log = Logger.getLogger(NewsScheduler.class);
 
     private final ApplicationProperties applicationProperties;
+    private final DoubleConverter doubleConverter;
     private final IssueService issueService;
     private final LocaleManager localeManager;
     private final PluginData pluginData;
@@ -63,8 +65,9 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     private final SearchProvider searchProvider;
     private final UserManager userManager;
 
-    public NewsScheduler(ApplicationProperties applicationProperties, IssueService issueService, LocaleManager localeManager, PluginData pluginData, ProjectManager projectManager, SchedulerService schedulerService, SearchProvider searchProvider, UserManager userManager) {
+    public NewsScheduler(ApplicationProperties applicationProperties, DoubleConverter doubleConverter, IssueService issueService, LocaleManager localeManager, PluginData pluginData, ProjectManager projectManager, SchedulerService schedulerService, SearchProvider searchProvider, UserManager userManager) {
         this.applicationProperties = applicationProperties;
+        this.doubleConverter = doubleConverter;
         this.issueService = issueService;
         this.localeManager = localeManager;
         this.pluginData = pluginData;
@@ -176,7 +179,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
                 issueInputParameters.addCustomFieldValue(Consts.URL_CF_ID, url);
                 issueInputParameters.addCustomFieldValue(Consts.CATEGORY_CF_ID, category);
                 issueInputParameters.addCustomFieldValue(Consts.PUBLISHING_DATE_CF_ID, jiraDateFormat.format(publishingDate));
-                issueInputParameters.addCustomFieldValue(Consts.ESTIMATED_TIME_CF_ID, String.valueOf(estimatedTime));
+                issueInputParameters.addCustomFieldValue(Consts.ESTIMATED_TIME_CF_ID, doubleConverter.getString(estimatedTime));
                 issueInputParameters.addCustomFieldValue(Consts.COMMENTS_CF_ID, String.valueOf(comments));
                 IssueService.CreateValidationResult createValidationResult = issueService.validateCreate(user.getDirectoryUser(), issueInputParameters);
 
