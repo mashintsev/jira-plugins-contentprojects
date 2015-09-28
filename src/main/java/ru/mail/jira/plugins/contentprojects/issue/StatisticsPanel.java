@@ -58,7 +58,13 @@ public class StatisticsPanel implements ContextProvider {
                 CommonUtils.getCustomField(Consts.ESTIMATED_TIME_CF_ID),
                 CommonUtils.getCustomField(Consts.COMMENTS_CF_ID),
                 CommonUtils.getCustomField(Consts.SHARE_RATIO_CF_ID),
-                CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID)
+                CommonUtils.getCustomField(Consts.SOCIAL_ENGAGEMENT_CF_ID),
+                CommonUtils.getCustomField(Consts.HITS_TOUCH_CF_ID),
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(0)),
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(1)),
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(2)),
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(3)),
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(4))
         );
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.searchService = searchService;
@@ -147,6 +153,12 @@ public class StatisticsPanel implements ContextProvider {
             fields.add(getDoubleField(fieldStatisticValues, 30, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 31, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 32, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 33, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 34, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 35, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 36, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 37, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 38, issue, true));
 
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("numberTool", new NumberTool(jiraAuthenticationContext.getI18nHelper().getLocale()));
