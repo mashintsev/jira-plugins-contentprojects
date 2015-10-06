@@ -5,7 +5,6 @@ import com.atlassian.jira.config.LocaleManager;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.IssueInputParameters;
-import com.atlassian.jira.issue.customfields.converters.DoubleConverter;
 import com.atlassian.jira.issue.search.SearchProvider;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.project.Project;
@@ -30,7 +29,6 @@ import ru.mail.jira.plugins.commons.HttpSender;
 import ru.mail.jira.plugins.commons.RestExecutor;
 import ru.mail.jira.plugins.contentprojects.common.Consts;
 import ru.mail.jira.plugins.contentprojects.configuration.PluginData;
-import ru.mail.jira.plugins.contentprojects.issue.functions.AbstractFunctionFactory;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.GET;
@@ -57,7 +55,6 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     private static final Logger log = Logger.getLogger(NewsScheduler.class);
 
     private final ApplicationProperties applicationProperties;
-    private final DoubleConverter doubleConverter;
     private final IssueService issueService;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final LocaleManager localeManager;
@@ -67,9 +64,8 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     private final SearchProvider searchProvider;
     private final UserManager userManager;
 
-    public NewsScheduler(ApplicationProperties applicationProperties, DoubleConverter doubleConverter, IssueService issueService, JiraAuthenticationContext jiraAuthenticationContext, LocaleManager localeManager, PluginData pluginData, ProjectManager projectManager, SchedulerService schedulerService, SearchProvider searchProvider, UserManager userManager) {
+    public NewsScheduler(ApplicationProperties applicationProperties, IssueService issueService, JiraAuthenticationContext jiraAuthenticationContext, LocaleManager localeManager, PluginData pluginData, ProjectManager projectManager, SchedulerService schedulerService, SearchProvider searchProvider, UserManager userManager) {
         this.applicationProperties = applicationProperties;
-        this.doubleConverter = doubleConverter;
         this.issueService = issueService;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.localeManager = localeManager;
@@ -141,16 +137,24 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     }
 
     private void createNewsIssues(Date date) throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        date = calendar.getTime();
+
         ApplicationUser user = userManager.getUserByName(Consts.NEWS_USER_NAME);
         if (user == null)
             throw new IllegalStateException(String.format("User %s is not found", Consts.NEWS_USER_NAME));
 
+        String jiraDatePattern = applicationProperties.getDefaultBackedString(APKeys.JIRA_DATE_TIME_PICKER_JAVA_FORMAT);
+        DateFormat jiraDateFormat = new SimpleDateFormat(jiraDatePattern, localeManager.getLocaleFor(user));
+
         ApplicationUser savedUser = jiraAuthenticationContext.getUser();
         try {
             jiraAuthenticationContext.setLoggedInUser(user);
-
-            String jiraDatePattern = applicationProperties.getDefaultBackedString(APKeys.JIRA_DATE_TIME_PICKER_JAVA_FORMAT);
-            DateFormat jiraDateFormat = new SimpleDateFormat(jiraDatePattern, localeManager.getLocaleFor(user));
 
             if (newsExist(date, user))
                 throw new Exception("News issues for the date already exist");
@@ -167,27 +171,16 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
                 JSONObject json = new JSONObject(response);
                 JSONArray elements = json.getJSONArray("data");
                 for (int i = 0; i < elements.length(); i++) {
-                    JSONObject element = elements.getJSONObject(i);
-                    String url = element.getString("url");
-                    String title = element.getString("title");
-                    String lead = element.getString("lead");
-                    String category = element.getString("category");
-                    long publishingDate = element.getLong("published") * 1000;
-                    Double estimatedTime = AbstractFunctionFactory.round(element.getLong("words_count") / 140.0);
-                    int comments = element.getInt("comments_count");
+                    String url = elements.getJSONObject(i).getString("url");
 
                     IssueInputParameters issueInputParameters = issueService.newIssueInputParameters();
                     issueInputParameters.setProjectId(project.getId());
                     issueInputParameters.setIssueTypeId(String.valueOf(Consts.NEWS_ISSUE_TYPE_ID));
                     issueInputParameters.setReporterId(user.getName());
                     issueInputParameters.setAssigneeId(null);
-                    issueInputParameters.setSummary(title);
-                    issueInputParameters.setDescription(lead);
+                    issueInputParameters.setSummary(url);
                     issueInputParameters.addCustomFieldValue(Consts.URL_CF_ID, url);
-                    issueInputParameters.addCustomFieldValue(Consts.CATEGORY_CF_ID, category);
-                    issueInputParameters.addCustomFieldValue(Consts.PUBLISHING_DATE_CF_ID, jiraDateFormat.format(publishingDate));
-                    issueInputParameters.addCustomFieldValue(Consts.ESTIMATED_TIME_CF_ID, doubleConverter.getString(estimatedTime));
-                    issueInputParameters.addCustomFieldValue(Consts.COMMENTS_CF_ID, String.valueOf(comments));
+                    issueInputParameters.addCustomFieldValue(Consts.PUBLISHING_DATE_CF_ID, jiraDateFormat.format(date));
                     IssueService.CreateValidationResult createValidationResult = issueService.validateCreate(user.getDirectoryUser(), issueInputParameters);
 
                     if (!createValidationResult.isValid())
