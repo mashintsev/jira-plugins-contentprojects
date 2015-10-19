@@ -58,7 +58,7 @@ public class Consts {
     public static final long PAYMENT_ACT_PROJECT_CF_ID = 11542;
     public static final Map<Long, String> PAYMENT_ACT_PROJECT_VALUE_MAP = new HashMap<Long, String>();
     public static final long PAYMENT_ACT_TYPICAL_CONTRACTS_CF_ID = 26000;
-    public static final long PAYMENT_ACT_TYPICAL_CONTRACTS_TEMPLATE_ID = 51;
+    public static final long PAYMENT_ACT_TYPICAL_CONTRACTS_TEMPLATE_ID = 52;
     public static final String PAYMENT_ACT_LINK_TYPE = "depends on";
 
     static {
