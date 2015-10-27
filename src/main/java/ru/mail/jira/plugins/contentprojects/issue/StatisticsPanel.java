@@ -64,7 +64,9 @@ public class StatisticsPanel implements ContextProvider {
                 CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(1)),
                 CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(2)),
                 CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(3)),
-                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(4))
+                CommonUtils.getCustomField(Consts.SCROLL_TOUCH_CF_IDS.get(4)),
+                CommonUtils.getCustomField(Consts.ENGAGEMENT_RATE),
+                CommonUtils.getCustomField(Consts.ENGAGEMENT_RATE_TOUCH)
         );
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.searchService = searchService;
@@ -159,6 +161,8 @@ public class StatisticsPanel implements ContextProvider {
             fields.add(getDoubleField(fieldStatisticValues, 36, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 37, issue, true));
             fields.add(getDoubleField(fieldStatisticValues, 38, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 39, issue, true));
+            fields.add(getDoubleField(fieldStatisticValues, 40, issue, true));
 
             Map<String, Object> params = new HashMap<String, Object>();
             params.put("numberTool", new NumberTool(jiraAuthenticationContext.getI18nHelper().getLocale()));
