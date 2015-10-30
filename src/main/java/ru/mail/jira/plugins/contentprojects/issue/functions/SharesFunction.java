@@ -1,5 +1,6 @@
 package ru.mail.jira.plugins.contentprojects.issue.functions;
 
+import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -29,9 +30,11 @@ import java.util.regex.Pattern;
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("/collectStatistics")
 public class SharesFunction extends AbstractJiraFunctionProvider {
+    private final ApplicationProperties applicationProperties;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public SharesFunction(JiraAuthenticationContext jiraAuthenticationContext) {
+    public SharesFunction(ApplicationProperties applicationProperties, JiraAuthenticationContext jiraAuthenticationContext) {
+        this.applicationProperties = applicationProperties;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
@@ -96,8 +99,11 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         CustomField urlCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.URL_FIELD));
 
         String url = (String) issue.getCustomFieldValue(urlCf);
-        if (StringUtils.isEmpty(url))
-            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
+        if (StringUtils.isEmpty(url)) {
+            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError");
+            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
+            throw new WorkflowException(message);
+        }
 
         try {
             int[] shares = getShares(url);
@@ -107,7 +113,9 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(twitterCf, (double) shares[3]);
             issue.setCustomFieldValue(vkontakteCf, (double) shares[4]);
         } catch (Exception e) {
-            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.sharesError"), e);
+            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.sharesError");
+            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
+            throw new WorkflowException(message, e);
         }
     }
 

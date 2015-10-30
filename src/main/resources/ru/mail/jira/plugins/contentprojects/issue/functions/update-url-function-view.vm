@@ -1,0 +1,4 @@
+$i18n.getText(
+    "ru.mail.jira.plugins.contentprojects.issue.functions.updateUrl.view",
+    "<strong>$urlField</strong>"
+)

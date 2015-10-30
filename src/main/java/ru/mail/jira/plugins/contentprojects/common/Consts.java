@@ -72,4 +72,6 @@ public class Consts {
         PAYMENT_ACT_PROJECT_VALUE_MAP.put(19273L, "23811");
         PAYMENT_ACT_PROJECT_VALUE_MAP.put(19274L, "23812");
     }
+
+    public final static List<String> NOTIFICATION_EMAIL_TO = Arrays.asList("ol.sidorova@mail.msk","anna.kotova@mail.msk");
 }

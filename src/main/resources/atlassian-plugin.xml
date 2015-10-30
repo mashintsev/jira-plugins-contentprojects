@@ -252,6 +252,14 @@
         <resource type="velocity" name="edit-parameters" location="ru/mail/jira/plugins/contentprojects/issue/functions/time-function-edit.vm" />
     </workflow-function>
 
+    <workflow-function key="update-url-function" i18n-name-key="ru.mail.jira.plugins.contentprojects.issue.functions.updateUrl.name" class="ru.mail.jira.plugins.contentprojects.issue.functions.AbstractFunctionFactory">
+        <description key="ru.mail.jira.plugins.contentprojects.issue.functions.updateUrl.description" />
+        <function-class>ru.mail.jira.plugins.contentprojects.issue.functions.UpdateUrlFunction</function-class>
+        <resource type="velocity" name="view" location="ru/mail/jira/plugins/contentprojects/issue/functions/update-url-function-view.vm" />
+        <resource type="velocity" name="input-parameters" location="ru/mail/jira/plugins/contentprojects/issue/functions/update-url-function-edit.vm" />
+        <resource type="velocity" name="edit-parameters" location="ru/mail/jira/plugins/contentprojects/issue/functions/update-url-function-edit.vm" />
+    </workflow-function>
+
     <web-resource key="statistics-panel-resource">
         <transformation extension="js">
             <transformer key="jsI18n"/>

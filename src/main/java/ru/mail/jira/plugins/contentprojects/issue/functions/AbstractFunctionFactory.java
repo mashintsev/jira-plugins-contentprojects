@@ -1,11 +1,16 @@
 package ru.mail.jira.plugins.contentprojects.issue.functions;
 
+import com.atlassian.jira.config.properties.APKeys;
+import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
+import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
+import ru.mail.jira.plugins.commons.CommonUtils;
+import ru.mail.jira.plugins.contentprojects.common.Consts;
 import ru.mail.jira.plugins.contentprojects.configuration.CounterManager;
 
 import java.net.MalformedURLException;
@@ -46,6 +51,12 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         if (a == null)
             return null;
         return Math.round(a * 100) / 100.0;
+    }
+
+    public static void sendErrorEmail(JiraAuthenticationContext jiraAuthenticationContext, ApplicationProperties applicationProperties, String message, String issueKey) {
+        String issueUrl = applicationProperties.getString(APKeys.JIRA_BASEURL) + "/browse/" + issueKey;
+        String body = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailMessage", message, issueUrl);
+        CommonUtils.sendEmail(Consts.NOTIFICATION_EMAIL_TO, jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailSubject"), body);
     }
 
     public AbstractFunctionFactory(CounterManager counterManager, CustomFieldManager customFieldManager) {
