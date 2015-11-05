@@ -26,15 +26,13 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
 
-    private String getRedirectUrl(String url) {
+    private String getRedirectUrl(String url) throws IOException {
         InputStream inputStream = null;
         try {
             URLConnection connection = new URL(url).openConnection();
             connection.connect();
             inputStream = connection.getInputStream();
             return connection.getURL().toString();
-        } catch (IOException e) {
-            log.error("Unable to create connection", e);
         } finally {
             if (inputStream != null)
                 try {
@@ -43,8 +41,6 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
                     log.error("Unable to close connection", e);
                 }
         }
-
-        return null;
     }
 
     @Override
@@ -58,9 +54,7 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
 
         try {
-            String redirectUrl = getRedirectUrl(url);
-            if (redirectUrl != null)
-                issue.setCustomFieldValue(urlCf, redirectUrl);
+             issue.setCustomFieldValue(urlCf, getRedirectUrl(url));
         } catch (Exception e) {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.updateUrlError"), e);
         }
