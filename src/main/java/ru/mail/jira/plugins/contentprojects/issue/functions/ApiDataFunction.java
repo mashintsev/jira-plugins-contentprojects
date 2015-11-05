@@ -1,6 +1,5 @@
 package ru.mail.jira.plugins.contentprojects.issue.functions;
 
-import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -17,12 +16,10 @@ import java.sql.Timestamp;
 import java.util.Map;
 
 public class ApiDataFunction extends AbstractJiraFunctionProvider {
-    private final ApplicationProperties applicationProperties;
     private final JiraAuthenticationContext jiraAuthenticationContext;
     private final PluginData pluginData;
 
-    public ApiDataFunction(ApplicationProperties applicationProperties, JiraAuthenticationContext jiraAuthenticationContext, PluginData pluginData) {
-        this.applicationProperties = applicationProperties;
+    public ApiDataFunction(JiraAuthenticationContext jiraAuthenticationContext, PluginData pluginData) {
         this.jiraAuthenticationContext = jiraAuthenticationContext;
         this.pluginData = pluginData;
     }
@@ -37,19 +34,13 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
         CustomField commentsCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.COMMENTS_FIELD));
         CustomField urlCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.URL_FIELD));
 
-        String apiUrl = pluginData.getApiUrl(issue.getProjectObject());
-        if (StringUtils.isEmpty(apiUrl)) {
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredApiError");
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
-            throw new WorkflowException(message);
-        }
-
         String url = (String) issue.getCustomFieldValue(urlCf);
-        if (StringUtils.isEmpty(url)){
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError");
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
+        if (StringUtils.isEmpty(url))
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
-        }
+
+        String apiUrl = pluginData.getApiUrl(issue.getProjectObject());
+        if (StringUtils.isEmpty(apiUrl))
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredApiError"));
 
         try {
             String response = new HttpSender(apiUrl, url).sendGet();
@@ -69,9 +60,8 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(estimatedTimeCf, estimatedTime);
             issue.setCustomFieldValue(commentsCf, (double) comments);
         } catch (Exception e) {
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.apiError");
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
-            throw new WorkflowException(message, e);
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.apiError", null, issue, url);
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.apiError"), e);
         }
     }
 }

@@ -1,6 +1,5 @@
 package ru.mail.jira.plugins.contentprojects.issue.functions;
 
-import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.security.JiraAuthenticationContext;
@@ -22,12 +21,10 @@ import java.util.Date;
 import java.util.Map;
 
 public class HitSourcesFunction extends AbstractJiraFunctionProvider {
-    private final ApplicationProperties applicationProperties;
     private final CounterManager counterManager;
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
-    public HitSourcesFunction(ApplicationProperties applicationProperties, CounterManager counterManager, JiraAuthenticationContext jiraAuthenticationContext) {
-        this.applicationProperties = applicationProperties;
+    public HitSourcesFunction(CounterManager counterManager, JiraAuthenticationContext jiraAuthenticationContext) {
         this.counterManager = counterManager;
         this.jiraAuthenticationContext = jiraAuthenticationContext;
     }
@@ -113,22 +110,16 @@ public class HitSourcesFunction extends AbstractJiraFunctionProvider {
         Counter counter = counterManager.getCounter(Integer.parseInt((String) args.get(AbstractFunctionFactory.COUNTER)));
         int numberOfDays = Integer.parseInt((String) args.get(AbstractFunctionFactory.NUMBER_OF_DAYS));
 
-        CounterConfig counterConfig = counterManager.getCounterConfig(counter, issue.getProjectObject());
-        if (counterConfig == null || counterConfig.getRatingId() == null) {
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredCounterError", counter.getName());
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
-            throw new WorkflowException(message);
-        }
-        if (counterConfig.getRatingId() == 0)
-            return;
-
         Date publishingDate = (Date) issue.getCustomFieldValue(publishingDateCf);
         String url = (String) issue.getCustomFieldValue(urlCf);
-        if (publishingDate == null || StringUtils.isEmpty(url)) {
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError");
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
-            throw new WorkflowException(message);
-        }
+        if (publishingDate == null || StringUtils.isEmpty(url))
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
+
+        CounterConfig counterConfig = counterManager.getCounterConfig(counter, issue.getProjectObject());
+        if (counterConfig == null || counterConfig.getRatingId() == null)
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredCounterError", counter.getName()));
+        if (counterConfig.getRatingId() == 0)
+            return;
 
         try {
             int[] socialMediaHits = getSocialMediaHits(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
@@ -142,9 +133,8 @@ public class HitSourcesFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(yandexCf, (double) searchEngineHits[1]);
             issue.setCustomFieldValue(otherSearchEnginesCf, (double) searchEngineHits[2]);
         } catch (Exception e) {
-            String message = jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName());
-            AbstractFunctionFactory.sendErrorEmail(jiraAuthenticationContext, applicationProperties, message, issue.getKey());
-            throw new WorkflowException(message, e);
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, url);
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
         }
     }
 }
