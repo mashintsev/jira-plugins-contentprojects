@@ -28,9 +28,10 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
 
     private String getRedirectUrl(String url) throws IOException {
         InputStream inputStream = null;
+
+        URLConnection connection = new URL(url).openConnection();
+        connection.connect();
         try {
-            URLConnection connection = new URL(url).openConnection();
-            connection.connect();
             inputStream = connection.getInputStream();
             return connection.getURL().toString();
         } finally {
@@ -54,7 +55,7 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
 
         try {
-             issue.setCustomFieldValue(urlCf, getRedirectUrl(url));
+            issue.setCustomFieldValue(urlCf, getRedirectUrl(url));
         } catch (Exception e) {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.updateUrlError"), e);
         }

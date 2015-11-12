@@ -13,7 +13,6 @@ import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.I18nHelper;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
-import org.apache.commons.lang3.StringUtils;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.contentprojects.common.Consts;
 import ru.mail.jira.plugins.contentprojects.configuration.CounterManager;
@@ -65,14 +64,14 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         recipientKeys.add(issue.getProjectObject().getProjectLead().getKey());
         String issueUrl = applicationProperties.getString(APKeys.JIRA_BASEURL) + "/browse/" + issue.getKey();
 
-        for(String recipientKey : recipientKeys) {
+        for (String recipientKey : recipientKeys) {
             ApplicationUser recipient = userManager.getUserByKey(recipientKey);
             if (recipient == null)
                 continue;
 
             I18nHelper i18nHelper = ComponentAccessor.getI18nHelperFactory().getInstance(recipient);
             String problem = counterName == null ? i18nHelper.getText(problemI18nKey) : i18nHelper.getText(problemI18nKey, counterName);
-            String body = i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailMessage", problem, issueUrl, StringUtils.trimToEmpty(url));
+            String body = i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailMessage", problem, issueUrl, url);
 
             CommonUtils.sendEmail(recipient, i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailSubject"), body);
         }

@@ -34,13 +34,13 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
         CustomField commentsCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.COMMENTS_FIELD));
         CustomField urlCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.URL_FIELD));
 
-        String url = (String) issue.getCustomFieldValue(urlCf);
-        if (StringUtils.isEmpty(url))
-            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
-
         String apiUrl = pluginData.getApiUrl(issue.getProjectObject());
         if (StringUtils.isEmpty(apiUrl))
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredApiError"));
+
+        String url = (String) issue.getCustomFieldValue(urlCf);
+        if (StringUtils.isEmpty(url))
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
 
         try {
             String response = new HttpSender(apiUrl, url).sendGet();

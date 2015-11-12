@@ -110,16 +110,16 @@ public class HitSourcesFunction extends AbstractJiraFunctionProvider {
         Counter counter = counterManager.getCounter(Integer.parseInt((String) args.get(AbstractFunctionFactory.COUNTER)));
         int numberOfDays = Integer.parseInt((String) args.get(AbstractFunctionFactory.NUMBER_OF_DAYS));
 
-        Date publishingDate = (Date) issue.getCustomFieldValue(publishingDateCf);
-        String url = (String) issue.getCustomFieldValue(urlCf);
-        if (publishingDate == null || StringUtils.isEmpty(url))
-            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
-
         CounterConfig counterConfig = counterManager.getCounterConfig(counter, issue.getProjectObject());
         if (counterConfig == null || counterConfig.getRatingId() == null)
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.notConfiguredCounterError", counter.getName()));
         if (counterConfig.getRatingId() == 0)
             return;
+
+        Date publishingDate = (Date) issue.getCustomFieldValue(publishingDateCf);
+        String url = (String) issue.getCustomFieldValue(urlCf);
+        if (publishingDate == null || StringUtils.isEmpty(url))
+            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.emptyFieldsError"));
 
         try {
             int[] socialMediaHits = getSocialMediaHits(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
