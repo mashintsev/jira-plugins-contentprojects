@@ -1,0 +1,2 @@
+#parse( "ru/mail/jira/plugins/contentprojects/issue/functions/macro.vm" )
+#customField( "urlField", $urlField )

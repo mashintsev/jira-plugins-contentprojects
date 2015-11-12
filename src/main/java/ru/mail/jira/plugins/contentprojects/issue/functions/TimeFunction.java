@@ -78,6 +78,7 @@ public class TimeFunction extends AbstractJiraFunctionProvider {
             Double time = getTime(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
             issue.setCustomFieldValue(timeCf, time);
         } catch (Exception e) {
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, url);
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
         }
     }

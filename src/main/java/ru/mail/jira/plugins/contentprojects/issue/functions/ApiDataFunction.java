@@ -60,6 +60,7 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(estimatedTimeCf, estimatedTime);
             issue.setCustomFieldValue(commentsCf, (double) comments);
         } catch (Exception e) {
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.apiError", null, issue, url);
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.apiError"), e);
         }
     }
