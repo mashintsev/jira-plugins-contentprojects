@@ -27,20 +27,17 @@ public class UpdateUrlFunction extends AbstractJiraFunctionProvider {
     }
 
     private String getRedirectUrl(String url) throws IOException {
-        InputStream inputStream = null;
-
         URLConnection connection = new URL(url).openConnection();
         connection.connect();
+        InputStream inputStream = connection.getInputStream();
         try {
-            inputStream = connection.getInputStream();
             return connection.getURL().toString();
         } finally {
-            if (inputStream != null)
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    log.error("Unable to close connection", e);
-                }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("Unable to close connection", e);
+            }
         }
     }
 
