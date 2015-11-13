@@ -13,6 +13,8 @@ import ru.mail.jira.plugins.commons.HttpSender;
 import ru.mail.jira.plugins.contentprojects.configuration.PluginData;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class ApiDataFunction extends AbstractJiraFunctionProvider {
@@ -60,7 +62,7 @@ public class ApiDataFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(estimatedTimeCf, estimatedTime);
             issue.setCustomFieldValue(commentsCf, (double) comments);
         } catch (Exception e) {
-            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.apiError", null, issue, url);
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.apiError", null, issue, Arrays.asList(urlCf, publishingDateCf));
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.apiError"), e);
         }
     }
