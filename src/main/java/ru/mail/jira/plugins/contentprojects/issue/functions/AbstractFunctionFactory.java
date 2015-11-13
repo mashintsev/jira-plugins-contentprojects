@@ -56,7 +56,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         return Math.round(a * 100) / 100.0;
     }
 
-    public static void sendErrorEmail(String problemI18nKey, String counterName, Issue issue, CustomField url, CustomField publishingDate) {
+    public static void sendErrorEmail(String problemI18nKey, String counterName, Issue issue, List<CustomField> customFields) {
         ApplicationProperties applicationProperties = ComponentAccessor.getApplicationProperties();
         UserManager userManager = ComponentAccessor.getUserManager();
 
@@ -71,9 +71,13 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
 
             I18nHelper i18nHelper = ComponentAccessor.getI18nHelperFactory().getInstance(recipient);
             String problem = counterName == null ? i18nHelper.getText(problemI18nKey) : i18nHelper.getText(problemI18nKey, counterName);
-            String body = i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailMessage", problem, i18nHelper.getText("common.words.issue"), issueUrl, url.getFieldName(), url.getValue(issue), publishingDate.getFieldName(), publishingDate.getValue(issue));
+            StringBuilder body = new StringBuilder();
+            body.append(problem).append("\n");
+            body.append(i18nHelper.getText("common.words.issue")).append(": ").append(issueUrl).append("\n");
+            for (CustomField customField : customFields)
+                body.append(customField.getFieldName()).append(": ").append(customField.getValue(issue)).append("\n");
 
-            CommonUtils.sendEmail(recipient, i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailSubject"), body);
+            CommonUtils.sendEmail(recipient, i18nHelper.getText("ru.mail.jira.plugins.contentprojects.issue.functions.errorMailSubject"), body.toString());
         }
     }
 
