@@ -56,7 +56,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         return Math.round(a * 100) / 100.0;
     }
 
-    public static void sendErrorEmail(String problemI18nKey, String counterName, Issue issue, List<CustomField> customFields) {
+    public static void sendErrorEmail(String problemI18nKey, String counterName, Issue issue, Collection<CustomField> customFields) {
         ApplicationProperties applicationProperties = ComponentAccessor.getApplicationProperties();
         UserManager userManager = ComponentAccessor.getUserManager();
 

@@ -74,7 +74,7 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
             int hits = getHits(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
             issue.setCustomFieldValue(hitsCf, (double) hits);
         } catch (Exception e) {
-            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, new ArrayList<CustomField>(Arrays.asList(urlCf, publishingDateCf)));
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, Arrays.asList(urlCf, publishingDateCf));
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
         }
     }

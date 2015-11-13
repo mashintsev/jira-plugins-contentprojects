@@ -131,7 +131,7 @@ public class HitSourcesFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(yandexCf, (double) searchEngineHits[1]);
             issue.setCustomFieldValue(otherSearchEnginesCf, (double) searchEngineHits[2]);
         } catch (Exception e) {
-            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, new ArrayList<CustomField>(Arrays.asList(urlCf, publishingDateCf)));
+            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, Arrays.asList(urlCf, publishingDateCf));
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
         }
     }
