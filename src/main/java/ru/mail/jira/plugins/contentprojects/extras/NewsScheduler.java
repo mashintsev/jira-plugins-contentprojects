@@ -39,10 +39,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 @Path("/createNews")
 @Produces({MediaType.APPLICATION_JSON})
@@ -86,7 +83,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
                     try {
                         Calendar calendar = Calendar.getInstance();
                         calendar.add(Calendar.DATE, -7);
-                        createNewsIssues(calendar.getTime());
+                        createNewsIssues(Consts.PROJECT_IDS, calendar.getTime());
                         return JobRunnerResponse.success();
                     } catch (Exception e) {
                         log.error(e);
@@ -116,7 +113,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
         schedulerService.unregisterJobRunner(JOB_RUNNER_KEY);
     }
 
-    private boolean newsExist(Date date, ApplicationUser user) throws Exception {
+    private boolean newsExist(Collection<Long> projectIds, Date date, ApplicationUser user) throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -128,7 +125,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
         Date endDate = calendar.getTime();
 
         Query query = JqlQueryBuilder.newClauseBuilder()
-                .project(Consts.PROJECT_IDS.toArray(new Long[Consts.PROJECT_IDS.size()]))
+                .project(projectIds.toArray(new Long[projectIds.size()]))
                 .and().issueType(String.valueOf(Consts.NEWS_ISSUE_TYPE_ID))
                 .and().customField(Consts.PUBLISHING_DATE_CF_ID).gtEq(startDate)
                 .and().customField(Consts.PUBLISHING_DATE_CF_ID).lt(endDate)
@@ -136,7 +133,7 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
         return searchProvider.searchCount(query, user) > 0;
     }
 
-    private void createNewsIssues(Date date) throws Exception {
+    private void createNewsIssues(Collection<Long> projectIds, Date date) throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 12);
@@ -156,11 +153,11 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
         try {
             jiraAuthenticationContext.setLoggedInUser(user);
 
-            if (newsExist(date, user))
+            if (newsExist(projectIds, date, user))
                 throw new Exception("News issues for the date already exist");
 
             Collection<IssueService.CreateValidationResult> createValidationResults = new ArrayList<IssueService.CreateValidationResult>();
-            for (Long projectId : Consts.PROJECT_IDS) {
+            for (Long projectId : projectIds) {
                 Project project = projectManager.getProjectObj(projectId);
 
                 String newsApiUrl = pluginData.getNewsApiUrl(project);
@@ -201,11 +198,20 @@ public class NewsScheduler implements LifecycleAware, DisposableBean {
     }
 
     @GET
-    public Response createNews(@QueryParam("date") final String date) {
+    public Response createNews(@QueryParam("projectKeys") final String projectKeys,
+                               @QueryParam("date") final String date) {
         return new RestExecutor<String>() {
             @Override
             protected String doAction() throws Exception {
-                createNewsIssues(new SimpleDateFormat(DATE_FORMAT).parse(date));
+                Collection<Long> projectIds;
+                if (StringUtils.isNotEmpty(projectKeys)) {
+                    projectIds = new ArrayList<Long>();
+                    for (String projectKey: CommonUtils.split(projectKeys))
+                        projectIds.add(projectManager.getProjectByCurrentKeyIgnoreCase(projectKey).getId());
+                } else
+                    projectIds = Consts.PROJECT_IDS;
+
+                createNewsIssues(projectIds, new SimpleDateFormat(DATE_FORMAT).parse(date));
                 return "Success";
             }
         }.getResponse();
