@@ -8,8 +8,8 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginFunctionFactory;
+import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
-import com.atlassian.jira.user.util.UserManager;
 import com.atlassian.jira.util.I18nHelper;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.FunctionDescriptor;
@@ -58,17 +58,12 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
 
     public static void sendErrorEmail(String problemI18nKey, String counterName, Issue issue, Collection<CustomField> customFields) {
         ApplicationProperties applicationProperties = ComponentAccessor.getApplicationProperties();
-        UserManager userManager = ComponentAccessor.getUserManager();
+        ProjectRoleManager projectRoleManager = ComponentAccessor.getOSGiComponentInstanceOfType(ProjectRoleManager.class);
 
-        List<String> recipientKeys = new ArrayList<String>(Consts.NOTIFICATION_USER_KEYS);
-        recipientKeys.add(issue.getProjectObject().getProjectLead().getKey());
         String issueUrl = applicationProperties.getString(APKeys.JIRA_BASEURL) + "/browse/" + issue.getKey();
+        Set<ApplicationUser> recipients = projectRoleManager.getProjectRoleActors(projectRoleManager.getProjectRole(Consts.NOTIFICATION_PROJECT_ROLE_ID), issue.getProjectObject()).getApplicationUsers();
 
-        for (String recipientKey : recipientKeys) {
-            ApplicationUser recipient = userManager.getUserByKey(recipientKey);
-            if (recipient == null)
-                continue;
-
+        for (ApplicationUser recipient : recipients) {
             I18nHelper i18nHelper = ComponentAccessor.getI18nHelperFactory().getInstance(recipient);
             String problem = counterName == null ? i18nHelper.getText(problemI18nKey) : i18nHelper.getText(problemI18nKey, counterName);
             StringBuilder body = new StringBuilder();
