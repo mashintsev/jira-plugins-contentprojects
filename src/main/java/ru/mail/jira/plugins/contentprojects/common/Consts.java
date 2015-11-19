@@ -73,5 +73,5 @@ public class Consts {
         PAYMENT_ACT_PROJECT_VALUE_MAP.put(19274L, "23812");
     }
 
-    public static long NOTIFICATION_PROJECT_ROLE_ID = 10030;
+    public static final long NOTIFICATION_PROJECT_ROLE_ID = 10030;
 }

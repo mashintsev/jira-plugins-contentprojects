@@ -60,8 +60,8 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         ApplicationProperties applicationProperties = ComponentAccessor.getApplicationProperties();
         ProjectRoleManager projectRoleManager = ComponentAccessor.getOSGiComponentInstanceOfType(ProjectRoleManager.class);
 
-        String issueUrl = applicationProperties.getString(APKeys.JIRA_BASEURL) + "/browse/" + issue.getKey();
         Set<ApplicationUser> recipients = projectRoleManager.getProjectRoleActors(projectRoleManager.getProjectRole(Consts.NOTIFICATION_PROJECT_ROLE_ID), issue.getProjectObject()).getApplicationUsers();
+        String issueUrl = applicationProperties.getString(APKeys.JIRA_BASEURL) + "/browse/" + issue.getKey();
 
         for (ApplicationUser recipient : recipients) {
             I18nHelper i18nHelper = ComponentAccessor.getI18nHelperFactory().getInstance(recipient);
