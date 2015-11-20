@@ -4,3 +4,4 @@
 #customField( "urlField", $urlField )
 #customField( "publishingDateField", $publishingDateField )
 #numberOfDays( "numberOfDays", $numberOfDays )
+#booleanField( "ignoreExceptions", $ignoreExceptions )

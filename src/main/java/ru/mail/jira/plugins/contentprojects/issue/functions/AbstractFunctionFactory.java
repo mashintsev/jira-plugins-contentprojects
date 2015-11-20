@@ -42,6 +42,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
     public static final String URL_FIELD = "urlField";
     public static final String COUNTER = "counter";
     public static final String NUMBER_OF_DAYS = "numberOfDays";
+    public static final String IGNORE_EXCEPTIONS = "ignoreExceptions";
 
     private final CounterManager counterManager;
     private final CustomFieldManager customFieldManager;
@@ -109,6 +110,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         velocityParams.put(URL_FIELD, functionDescriptor.getArgs().get(URL_FIELD));
         velocityParams.put(COUNTER, functionDescriptor.getArgs().get(COUNTER));
         velocityParams.put(NUMBER_OF_DAYS, functionDescriptor.getArgs().get(NUMBER_OF_DAYS));
+        velocityParams.put(IGNORE_EXCEPTIONS, functionDescriptor.getArgs().get(IGNORE_EXCEPTIONS));
     }
 
     @Override
@@ -149,6 +151,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         velocityParams.put(TIME_FIELD, getCustomFieldName((String) velocityParams.get(TIME_FIELD)));
         velocityParams.put(URL_FIELD, getCustomFieldName((String) velocityParams.get(URL_FIELD)));
         velocityParams.put(COUNTER, getCounterName((String) velocityParams.get(COUNTER)));
+        velocityParams.put(IGNORE_EXCEPTIONS, getCounterName((String) velocityParams.get(IGNORE_EXCEPTIONS)));
     }
 
     private void addStringParam(Map<String, Object> descriptorParams, Map<String, Object> formParams, String paramName) {
@@ -161,6 +164,13 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
     private void addIntegerParam(Map<String, Object> descriptorParams, Map<String, Object> formParams, String paramName, int min, int max) {
         try {
             descriptorParams.put(paramName, Math.max(min, Math.min(max, Integer.parseInt(extractSingleParam(formParams, paramName)))));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void addBooleanParam(Map<String, Object> descriptorParams, Map<String, Object> formParams, String paramName) {
+        try {
+            descriptorParams.put(paramName, Boolean.parseBoolean(extractSingleParam(formParams, paramName)));
         } catch (Exception ignored) {
         }
     }
@@ -185,6 +195,7 @@ public class AbstractFunctionFactory extends AbstractWorkflowPluginFactory imple
         addStringParam(descriptorParams, formParams, URL_FIELD);
         addStringParam(descriptorParams, formParams, COUNTER);
         addIntegerParam(descriptorParams, formParams, NUMBER_OF_DAYS, 1, 30);
+        addBooleanParam(descriptorParams, formParams, IGNORE_EXCEPTIONS);
         return descriptorParams;
     }
 }

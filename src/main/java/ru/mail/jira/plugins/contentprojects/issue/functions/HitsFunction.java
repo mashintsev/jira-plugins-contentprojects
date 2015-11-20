@@ -58,6 +58,7 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
         CustomField urlCf = CommonUtils.getCustomField((String) args.get(AbstractFunctionFactory.URL_FIELD));
         Counter counter = counterManager.getCounter(Integer.parseInt((String) args.get(AbstractFunctionFactory.COUNTER)));
         int numberOfDays = Integer.parseInt((String) args.get(AbstractFunctionFactory.NUMBER_OF_DAYS));
+        boolean ignoreExceptions = Boolean.parseBoolean((String) args.get(AbstractFunctionFactory.IGNORE_EXCEPTIONS));
 
         CounterConfig counterConfig = counterManager.getCounterConfig(counter, issue.getProjectObject());
         if (counterConfig == null || counterConfig.getRatingId() == null)
@@ -74,8 +75,10 @@ public class HitsFunction extends AbstractJiraFunctionProvider {
             int hits = getHits(AbstractFunctionFactory.getFilter(url), publishingDate, numberOfDays, counterConfig.getRatingId(), StringUtils.trimToEmpty(counterConfig.getRatingPassword()));
             issue.setCustomFieldValue(hitsCf, (double) hits);
         } catch (Exception e) {
-            AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, Arrays.asList(urlCf, publishingDateCf));
-            throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
+            if (!ignoreExceptions) {
+                AbstractFunctionFactory.sendErrorEmail("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName(), issue, Arrays.asList(urlCf, publishingDateCf));
+                throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.counterError", counter.getName()), e);
+            }
         }
     }
 }

@@ -9,3 +9,6 @@ $i18n.getText(
     "<strong>$publishingDateField</strong>",
     "<strong>$numberOfDays</strong>"
 )
+#if( $ignoreExceptions == true )
+    $i18n.getText( "ru.mail.jira.plugins.contentprojects.issue.functions.exceptionsAreIgnored" )
+#end
