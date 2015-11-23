@@ -45,7 +45,7 @@ public class HitSourcesCFType extends CalculatedCFType<Double, Double> {
             result.put("facebook", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_FACEBOOK_CF_ID)));
             result.put("mymail", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_MYMAIL_CF_ID)));
             result.put("odnoklassniki", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_ODNOKLASSNIKI_CF_ID)));
-            result.put("twitter", issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_TWITTER_CF_ID)) == null? null : (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_TWITTER_CF_ID)));
+            result.put("twitter", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_TWITTER_CF_ID)));
             result.put("vkontakte", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.SHARES_VKONTAKTE_CF_ID)));
         } else if (field.getIdAsLong() == Consts.HITS_SOCIAL_MEDIA_CF_ID) {
             result.put("facebook", (Double) issue.getCustomFieldValue(CommonUtils.getCustomField(Consts.HITS_SOCIAL_MEDIA_FACEBOOK_CF_ID)));
