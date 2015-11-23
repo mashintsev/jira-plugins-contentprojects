@@ -66,9 +66,8 @@ public class HitSourcesCFType extends CalculatedCFType<Double, Double> {
     public Double getValueFromIssue(CustomField field, Issue issue) {
         double result = 0;
         for (Double hitSource : getHitSources(field, issue).values()) {
-            if (hitSource == null)
-                return null;
-            result += hitSource;
+            if (hitSource != null)
+                result += hitSource;
         }
         return result;
     }
