@@ -79,7 +79,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         int facebook = getSharesFacebook(url);
         int mymail = getSharesMymail(url, url + separator + "social=my");
         int odnoklassniki = getSharesOdnoklassniki(url) + getSharesOdnoklassniki(url + separator + "social=ok");
-        int twitter = getSharesTwitter(url) + getSharesTwitter(url + separator + "social=tw");
+        int twitter = 0;
         int vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
         return new int[] { facebook, mymail, odnoklassniki, twitter, vkontakte };
     }
@@ -104,7 +104,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(facebookCf, (double) shares[0]);
             issue.setCustomFieldValue(myMailCf, (double) shares[1]);
             issue.setCustomFieldValue(odnoklassnikiCf, (double) shares[2]);
-            issue.setCustomFieldValue(twitterCf, (double) shares[3]);
+            issue.setCustomFieldValue(twitterCf, null);
             issue.setCustomFieldValue(vkontakteCf, (double) shares[4]);
         } catch (Exception e) {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.sharesError"), e);
