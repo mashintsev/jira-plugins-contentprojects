@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.net.ConnectException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -80,7 +81,18 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         int mymail = getSharesMymail(url, url + separator + "social=my");
         int odnoklassniki = getSharesOdnoklassniki(url) + getSharesOdnoklassniki(url + separator + "social=ok");
         int twitter = 0;
-        int vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
+        int vkontakte = 0;
+        int countVk = 0;
+        while (countVk < 2)
+            try {
+                countVk++;
+                vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
+                break;
+            } catch (ConnectException e) {
+                if (countVk < 2)
+                    continue;
+                throw new Exception(e.getMessage(), e);
+            }
         return new int[] { facebook, mymail, odnoklassniki, twitter, vkontakte };
     }
 
