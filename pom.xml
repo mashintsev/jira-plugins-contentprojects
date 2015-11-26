@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.mail.jira.plugins</groupId>
     <artifactId>contentprojects</artifactId>
-    <version>1.8.126</version>
+    <version>1.8.127</version>
 
     <organization>
         <name>Andrey Molchanov | Mail.Ru Group</name>
@@ -46,6 +46,12 @@
             <groupId>ru.mail.jira.plugins</groupId>
             <artifactId>commons</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.3.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
