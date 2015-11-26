@@ -14,6 +14,7 @@ import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.HttpSender;
 import ru.mail.jira.plugins.commons.HttpTwitterSender;
 import ru.mail.jira.plugins.commons.RestExecutor;
+import ru.mail.jira.plugins.contentprojects.common.Consts;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -33,13 +34,6 @@ import java.util.regex.Pattern;
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("/collectStatistics")
 public class SharesFunction extends AbstractJiraFunctionProvider {
-
-    /**
-     * Key and secret pair may create on page https://apps.twitter.com/
-     * This is key-secret pair for fake application.
-     */
-    private final static String TWITTER_API_KEY = "hxxZED7XGgEIZfdZjimVpCA4R";
-    private final static String TWITTER_API_SECRET = "TCLxQrik1rL6p4AprH1eV8764jmtEHhMJ3JZuNDS3DdbzZmhzV";
 
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
@@ -77,7 +71,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         boolean hasMore = true;
 
         HttpTwitterSender httpSender = new HttpTwitterSender()
-                .authenticate(TWITTER_API_KEY, TWITTER_API_SECRET);
+                .authenticate(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET);
 
         String baseTwitterUrl = "https://api.twitter.com/1.1/search/tweets.json";
         String searchUrl = CommonUtils.formatUrl(baseTwitterUrl + "?q=%s&count=100", url);
