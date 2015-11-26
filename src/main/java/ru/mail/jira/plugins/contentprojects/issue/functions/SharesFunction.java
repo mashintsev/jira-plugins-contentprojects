@@ -72,7 +72,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         String response = null;
         Integer result = 0;
 
-        while (iteration < 3)
+        while (iteration < 3) {
             try {
                 iteration++;
                 response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
@@ -81,6 +81,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
                     continue;
                 throw e;
             }
+        }
 
         if (response != null) {
             Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
