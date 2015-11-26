@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.mail.jira.plugins</groupId>
     <artifactId>contentprojects</artifactId>
-    <version>1.8.126</version>
+    <version>1.8.127</version>
 
     <organization>
         <name>Andrey Molchanov | Mail.Ru Group</name>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>com.atlassian.activeobjects</groupId>
             <artifactId>activeobjects-plugin</artifactId>
-            <version>0.23.7</version>
+            <version>0.28.7</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

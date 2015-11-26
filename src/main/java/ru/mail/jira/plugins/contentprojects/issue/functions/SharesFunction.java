@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.net.ConnectException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -67,11 +68,28 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
     }
 
     private int getSharesVkontakte(String url) throws Exception {
-        String response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
-        Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
-        if (!matcher.matches())
-            throw new IllegalArgumentException("Response doesn't match the pattern");
-        return Integer.parseInt(matcher.group(2));
+        int iteration = 0;
+        String response = null;
+        Integer result = 0;
+
+        while (iteration < 3) {
+            try {
+                iteration++;
+                response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
+            } catch (ConnectException e) {
+                if (iteration < 3)
+                    continue;
+                throw e;
+            }
+        }
+
+        if (response != null) {
+            Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("Response doesn't match the pattern");
+            result =  Integer.parseInt(matcher.group(2));
+        }
+        return result;
     }
 
     private int[] getShares(String url) throws Exception {
