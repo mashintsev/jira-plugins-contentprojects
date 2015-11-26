@@ -133,6 +133,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             try {
                 iteration++;
                 response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
+                break;
             } catch (ConnectException e) {
                 if (iteration < 3)
                     continue;
