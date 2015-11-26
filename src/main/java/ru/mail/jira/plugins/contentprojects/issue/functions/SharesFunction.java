@@ -69,20 +69,26 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
 
     private int getSharesVkontakte(String url) throws Exception {
         int iteration = 0;
+        String response = null;
+        Integer result = 0;
+
         while (iteration < 3)
             try {
                 iteration++;
-                String response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
-                Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
-                if (!matcher.matches())
-                    throw new IllegalArgumentException("Response doesn't match the pattern");
-                return Integer.parseInt(matcher.group(2));
+                response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
             } catch (ConnectException e) {
                 if (iteration < 3)
                     continue;
-                throw new Exception(e.getMessage(), e);
+                throw e;
             }
-        return 0;
+
+        if (response != null) {
+            Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
+            if (!matcher.matches())
+                throw new IllegalArgumentException("Response doesn't match the pattern");
+            result =  Integer.parseInt(matcher.group(2));
+        }
+        return result;
     }
 
     private int[] getShares(String url) throws Exception {
