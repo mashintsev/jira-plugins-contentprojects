@@ -74,4 +74,11 @@ public class Consts {
     }
 
     public static final long NOTIFICATION_PROJECT_ROLE_ID = 10030;
+
+    /**
+     * Key and secret pair may create on page https://apps.twitter.com/
+     * This is key-secret pair for fake application.
+     */
+    public final static String TWITTER_API_KEY = "hxxZED7XGgEIZfdZjimVpCA4R";
+    public final static String TWITTER_API_SECRET = "TCLxQrik1rL6p4AprH1eV8764jmtEHhMJ3JZuNDS3DdbzZmhzV";
 }

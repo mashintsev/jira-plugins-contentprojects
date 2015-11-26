@@ -6,12 +6,15 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONArray;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
+import com.google.gson.stream.JsonReader;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
 import org.apache.commons.lang3.StringUtils;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.HttpSender;
+import ru.mail.jira.plugins.commons.HttpTwitterSender;
 import ru.mail.jira.plugins.commons.RestExecutor;
+import ru.mail.jira.plugins.contentprojects.common.Consts;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +24,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,6 +35,7 @@ import java.util.regex.Pattern;
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("/collectStatistics")
 public class SharesFunction extends AbstractJiraFunctionProvider {
+
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
     public SharesFunction(JiraAuthenticationContext jiraAuthenticationContext) {
@@ -62,9 +68,60 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
     }
 
     private int getSharesTwitter(String url) throws Exception {
-        String response = new HttpSender("https://cdn.api.twitter.com/1/urls/count.json?url=%s", url).sendGet();
-        JSONObject json = new JSONObject(response);
-        return json.getInt("count");
+        int count = 0;
+        boolean hasMore = true;
+
+        HttpTwitterSender httpSender = new HttpTwitterSender()
+                .authenticate(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET);
+
+        String baseTwitterUrl = "https://api.twitter.com/1.1/search/tweets.json";
+        String searchUrl = CommonUtils.formatUrl(baseTwitterUrl + "?q=%s&count=100", url);
+
+        while(hasMore) {
+            hasMore = false;
+            String response = httpSender.sendGet(searchUrl, null);
+            JsonReader reader = new JsonReader(new StringReader(response));
+            reader.beginObject();
+
+            while (reader.hasNext()) {
+                String name = reader.nextName();
+                if ("search_metadata".equals(name)) {
+                    String nextResultsUrl = getNextResultsUrl(reader);
+                    if(StringUtils.isNotEmpty(nextResultsUrl)) {
+                        searchUrl = baseTwitterUrl + nextResultsUrl;
+                        hasMore = true;
+                    }
+                } else if ("statuses".equals(name)) {
+                    // reading twits array
+                    reader.beginArray();
+                    while (reader.hasNext()) {
+                        count++;
+                        reader.skipValue();
+                    }
+                    reader.endArray();
+                } else {
+                    reader.skipValue(); //avoid some unhandle events
+                }
+            }
+
+            reader.endObject();
+            reader.close();
+        }
+        return count;
+    }
+
+    private String getNextResultsUrl(JsonReader reader) throws IOException {
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+            if ("next_results".equals(name)) {
+                return reader.nextString();
+            } else {
+                reader.skipValue(); //avoid some unhandle events
+            }
+        }
+        reader.endObject();
+        return null;
     }
 
     private int getSharesVkontakte(String url) throws Exception {
@@ -76,6 +133,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             try {
                 iteration++;
                 response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
+                break;
             } catch (ConnectException e) {
                 if (iteration < 3)
                     continue;
@@ -97,7 +155,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         int facebook = getSharesFacebook(url);
         int mymail = getSharesMymail(url, url + separator + "social=my");
         int odnoklassniki = getSharesOdnoklassniki(url) + getSharesOdnoklassniki(url + separator + "social=ok");
-        int twitter = 0;
+        int twitter = getSharesTwitter(url) + getSharesTwitter(url + separator + "social=tw");
         int vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
         return new int[] { facebook, mymail, odnoklassniki, twitter, vkontakte };
     }
@@ -122,7 +180,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             issue.setCustomFieldValue(facebookCf, (double) shares[0]);
             issue.setCustomFieldValue(myMailCf, (double) shares[1]);
             issue.setCustomFieldValue(odnoklassnikiCf, (double) shares[2]);
-            issue.setCustomFieldValue(twitterCf, null);
+            issue.setCustomFieldValue(twitterCf, (double) shares[3]);
             issue.setCustomFieldValue(vkontakteCf, (double) shares[4]);
         } catch (Exception e) {
             throw new WorkflowException(jiraAuthenticationContext.getI18nHelper().getText("ru.mail.jira.plugins.contentprojects.issue.functions.sharesError"), e);
