@@ -68,11 +68,21 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
     }
 
     private int getSharesVkontakte(String url) throws Exception {
-        String response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
-        Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
-        if (!matcher.matches())
-            throw new IllegalArgumentException("Response doesn't match the pattern");
-        return Integer.parseInt(matcher.group(2));
+        int iteration = 0;
+        while (iteration < 3)
+            try {
+                iteration++;
+                String response = new HttpSender("https://vk.com/share.php?url=%s&act=count", url).sendGet();
+                Matcher matcher = Pattern.compile("VK\\.Share\\.count\\((\\d+), (\\d+)\\);").matcher(response);
+                if (!matcher.matches())
+                    throw new IllegalArgumentException("Response doesn't match the pattern");
+                return Integer.parseInt(matcher.group(2));
+            } catch (ConnectException e) {
+                if (iteration < 3)
+                    continue;
+                throw new Exception(e.getMessage(), e);
+            }
+        return 0;
     }
 
     private int[] getShares(String url) throws Exception {
@@ -81,18 +91,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         int mymail = getSharesMymail(url, url + separator + "social=my");
         int odnoklassniki = getSharesOdnoklassniki(url) + getSharesOdnoklassniki(url + separator + "social=ok");
         int twitter = 0;
-        int vkontakte = 0;
-        int countVk = 0;
-        while (countVk < 2)
-            try {
-                countVk++;
-                vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
-                break;
-            } catch (ConnectException e) {
-                if (countVk < 2)
-                    continue;
-                throw new Exception(e.getMessage(), e);
-            }
+        int vkontakte = getSharesVkontakte(url) + getSharesVkontakte(url + separator + "social=vk");
         return new int[] { facebook, mymail, odnoklassniki, twitter, vkontakte };
     }
 
