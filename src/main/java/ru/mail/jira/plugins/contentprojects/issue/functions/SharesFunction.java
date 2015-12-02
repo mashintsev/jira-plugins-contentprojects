@@ -6,10 +6,12 @@ import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.util.json.JSONArray;
 import com.atlassian.jira.util.json.JSONObject;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
-import com.google.gson.stream.JsonReader;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.WorkflowException;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.HttpSender;
 import ru.mail.jira.plugins.commons.HttpTwitterSender;
@@ -25,7 +27,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.Iterator;
 import java.util.Map;
@@ -77,50 +78,53 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         String baseTwitterUrl = "https://api.twitter.com/1.1/search/tweets.json";
         String searchUrl = CommonUtils.formatUrl(baseTwitterUrl + "?q=%s&count=100", url);
 
-        while(hasMore) {
+        JsonFactory f = new JsonFactory();
+
+        while (hasMore) {
             hasMore = false;
             String response = httpSender.sendGet(searchUrl, null);
-            JsonReader reader = new JsonReader(new StringReader(response));
-            reader.beginObject();
+            JsonParser jp = null;
+            try {
+                jp = f.createJsonParser(response);
+                jp.nextToken();
 
-            while (reader.hasNext()) {
-                String name = reader.nextName();
-                if ("search_metadata".equals(name)) {
-                    String nextResultsUrl = getNextResultsUrl(reader);
-                    if(StringUtils.isNotEmpty(nextResultsUrl)) {
-                        searchUrl = baseTwitterUrl + nextResultsUrl;
-                        hasMore = true;
+                while (jp.nextToken() != JsonToken.END_OBJECT) {
+                    String name = jp.getCurrentName();
+                    if ("search_metadata".equals(name)) {
+                        String nextResultsUrl = getNextResultsUrl(jp);
+                        if (StringUtils.isNotEmpty(nextResultsUrl)) {
+                            searchUrl = baseTwitterUrl + nextResultsUrl;
+                            hasMore = true;
+                        }
+                    } else if ("statuses".equals(name)) {
+                        // reading twits array
+                        jp.nextToken();
+                        while (jp.nextToken() == JsonToken.START_OBJECT) {
+                            count++;
+                            jp.skipChildren();
+                        }
+                    } else {
+                        jp.skipChildren();
                     }
-                } else if ("statuses".equals(name)) {
-                    // reading twits array
-                    reader.beginArray();
-                    while (reader.hasNext()) {
-                        count++;
-                        reader.skipValue();
-                    }
-                    reader.endArray();
-                } else {
-                    reader.skipValue(); //avoid some unhandle events
                 }
+            } finally {
+                if(jp != null)
+                    jp.close();
             }
-
-            reader.endObject();
-            reader.close();
         }
         return count;
     }
 
-    private String getNextResultsUrl(JsonReader reader) throws IOException {
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String name = reader.nextName();
+    private String getNextResultsUrl(JsonParser jp) throws IOException {
+        jp.nextToken();
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String name = jp.getCurrentName();
             if ("next_results".equals(name)) {
-                return reader.nextString();
+                return jp.nextTextValue();
             } else {
-                reader.skipValue(); //avoid some unhandle events
+                jp.skipChildren(); //avoid some unhandle events
             }
         }
-        reader.endObject();
         return null;
     }
 
