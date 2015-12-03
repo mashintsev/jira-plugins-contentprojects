@@ -14,7 +14,6 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 import ru.mail.jira.plugins.commons.CommonUtils;
 import ru.mail.jira.plugins.commons.HttpSender;
-import ru.mail.jira.plugins.commons.HttpTwitterSender;
 import ru.mail.jira.plugins.commons.RestExecutor;
 import ru.mail.jira.plugins.contentprojects.common.Consts;
 
@@ -68,12 +67,26 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         return json.getInt("count");
     }
 
+    /**
+     * To parse Twitter Json response used Jackson Streaming API.
+     * This produces a smaller footprint in memory and the same performance with respect to time.
+     * @param url
+     * @return twitter shares count
+     * @throws Exception
+     */
     private int getSharesTwitter(String url) throws Exception {
         int count = 0;
         boolean hasMore = true;
 
-        HttpTwitterSender httpSender = new HttpTwitterSender()
-                .authenticate(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET);
+        HttpSender sender = new HttpSender("https://api.twitter.com/oauth2/token")
+                .setAuthenticationInfo(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET)
+                .setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+
+        JSONObject authResponse = new JSONObject(sender.sendGet("grant_type=client_credentials"));
+        String accessToken = authResponse.getString("access_token");
+
+        if (StringUtils.isEmpty(accessToken))
+            throw new Exception("There isn't access token. Authorization failed.");
 
         String baseTwitterUrl = "https://api.twitter.com/1.1/search/tweets.json";
         String searchUrl = CommonUtils.formatUrl(baseTwitterUrl + "?q=%s&count=100", url);
@@ -82,7 +95,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
 
         while (hasMore) {
             hasMore = false;
-            String response = httpSender.sendGet(searchUrl, null);
+            String response = new HttpSender(searchUrl).setHeader("Authorization", "Bearer " + accessToken).sendGet();
             JsonParser jp = null;
             try {
                 jp = f.createJsonParser(response);
