@@ -107,8 +107,12 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
                             String metaName = jp.getCurrentName();
                             if ("next_results".equals(metaName)) {
                                 String nextResultsUrl = jp.nextTextValue();
-                                if (StringUtils.isNotEmpty(nextResultsUrl))
+                                if (StringUtils.isNotEmpty(nextResultsUrl)) {
                                     searchUrl = BASE_TWITTER_SEARCH_URL + nextResultsUrl;
+
+                                    jp.skipChildren();
+                                    break;
+                                }
                             } else
                                 jp.skipChildren(); //avoid some unhandle events
                         }
