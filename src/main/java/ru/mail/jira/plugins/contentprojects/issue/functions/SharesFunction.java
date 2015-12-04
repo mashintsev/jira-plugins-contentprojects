@@ -80,7 +80,7 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         String accessToken = authResponse.getString("access_token");
 
         if (StringUtils.isEmpty(accessToken))
-            throw new Exception("There isn't access token. Authorization failed.");
+            throw new Exception("There no access token. Authorization failed.");
 
         final String BASE_TWITTER_SEARCH_URL = "https://api.twitter.com/1.1/search/tweets.json";
 
