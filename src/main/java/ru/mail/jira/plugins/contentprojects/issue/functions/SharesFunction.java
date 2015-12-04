@@ -70,13 +70,8 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
     /**
      * To parse Twitter Json response used Jackson Streaming API.
      * This produces a smaller footprint in memory and the same performance with respect to time.
-     * @param url
-     * @return twitter shares count
-     * @throws Exception
      */
     private int getSharesTwitter(String url) throws Exception {
-        int count = 0;
-        boolean hasMore = true;
 
         HttpSender sender = new HttpSender("https://api.twitter.com/oauth2/token")
                 .setAuthenticationInfo(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET)
@@ -88,57 +83,52 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
         if (StringUtils.isEmpty(accessToken))
             throw new Exception("There isn't access token. Authorization failed.");
 
-        String baseTwitterUrl = "https://api.twitter.com/1.1/search/tweets.json";
-        String searchUrl = CommonUtils.formatUrl(baseTwitterUrl + "?q=%s&count=100", url);
+        final String BASE_TWITTER_SEARCH_URL = "https://api.twitter.com/1.1/search/tweets.json";
 
         JsonFactory f = new JsonFactory();
 
-        while (hasMore) {
-            hasMore = false;
+        String searchUrl = CommonUtils.formatUrl(BASE_TWITTER_SEARCH_URL + "?q=%s&count=100", url);
+        int count = 0;
+        do {
             String response = new HttpSender(searchUrl).setHeader("Authorization", "Bearer " + accessToken).sendGet();
-            JsonParser jp = null;
+            searchUrl = null;
+
+            JsonParser jp = f.createJsonParser(response);
             try {
-                jp = f.createJsonParser(response);
+                //start root object
                 jp.nextToken();
 
                 while (jp.nextToken() != JsonToken.END_OBJECT) {
                     String name = jp.getCurrentName();
                     if ("search_metadata".equals(name)) {
-                        String nextResultsUrl = getNextResultsUrl(jp);
-                        if (StringUtils.isNotEmpty(nextResultsUrl)) {
-                            searchUrl = baseTwitterUrl + nextResultsUrl;
-                            hasMore = true;
+                        jp.nextToken();//start object search_metadata
+
+                        while (jp.nextToken() != JsonToken.END_OBJECT) {
+                            String metaName = jp.getCurrentName();
+                            if ("next_results".equals(metaName)) {
+                                String nextResultsUrl = jp.nextTextValue();
+                                if (StringUtils.isNotEmpty(nextResultsUrl))
+                                    searchUrl = BASE_TWITTER_SEARCH_URL + nextResultsUrl;
+                            } else
+                                jp.skipChildren(); //avoid some unhandle events
                         }
                     } else if ("statuses".equals(name)) {
                         // reading twits array
-                        jp.nextToken();
-                        while (jp.nextToken() == JsonToken.START_OBJECT) {
+                        jp.nextToken();//start statuses array
+                        while (jp.nextToken() == JsonToken.START_OBJECT) {//read object in array
                             count++;
                             jp.skipChildren();
                         }
-                    } else {
+                    } else
                         jp.skipChildren();
-                    }
                 }
             } finally {
-                if(jp != null)
-                    jp.close();
+                jp.close();
             }
-        }
-        return count;
-    }
 
-    private String getNextResultsUrl(JsonParser jp) throws IOException {
-        jp.nextToken();
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String name = jp.getCurrentName();
-            if ("next_results".equals(name)) {
-                return jp.nextTextValue();
-            } else {
-                jp.skipChildren(); //avoid some unhandle events
-            }
-        }
-        return null;
+        } while (searchUrl != null);
+
+        return count;
     }
 
     private int getSharesVkontakte(String url) throws Exception {
