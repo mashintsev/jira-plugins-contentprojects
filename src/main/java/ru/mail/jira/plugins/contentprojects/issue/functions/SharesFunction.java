@@ -72,7 +72,6 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
      * This produces a smaller footprint in memory and the same performance with respect to time.
      */
     private int getSharesTwitter(String url) throws Exception {
-
         HttpSender sender = new HttpSender("https://api.twitter.com/oauth2/token")
                 .setAuthenticationInfo(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET)
                 .setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
