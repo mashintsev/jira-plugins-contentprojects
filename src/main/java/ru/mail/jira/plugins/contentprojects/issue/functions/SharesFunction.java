@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 @Produces({ MediaType.APPLICATION_JSON })
 @Path("/collectStatistics")
 public class SharesFunction extends AbstractJiraFunctionProvider {
-
     private final JiraAuthenticationContext jiraAuthenticationContext;
 
     public SharesFunction(JiraAuthenticationContext jiraAuthenticationContext) {
@@ -72,12 +71,13 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
      * This produces a smaller footprint in memory and the same performance with respect to time.
      */
     private int getSharesTwitter(String url) throws Exception {
-        HttpSender sender = new HttpSender("https://api.twitter.com/oauth2/token")
+        String authResponse = new HttpSender("https://api.twitter.com/oauth2/token")
                 .setAuthenticationInfo(Consts.TWITTER_API_KEY, Consts.TWITTER_API_SECRET)
-                .setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+                .setHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
+                .sendGet("grant_type=client_credentials");
 
-        JSONObject authResponse = new JSONObject(sender.sendGet("grant_type=client_credentials"));
-        String accessToken = authResponse.getString("access_token");
+        JSONObject authJson = new JSONObject(authResponse);
+        String accessToken = authJson.getString("access_token");
 
         if (StringUtils.isEmpty(accessToken))
             throw new Exception("There no access token. Authorization failed.");
@@ -114,8 +114,8 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
                         }
                     } else if ("statuses".equals(name)) {
                         // reading twits array
-                        jp.nextToken();//start statuses array
-                        while (jp.nextToken() == JsonToken.START_OBJECT) {//read object in array
+                        jp.nextToken(); //start statuses array
+                        while (jp.nextToken() == JsonToken.START_OBJECT) { //read object in array
                             count++;
                             jp.skipChildren();
                         }
