@@ -100,7 +100,8 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
                 while (jp.nextToken() != JsonToken.END_OBJECT) {
                     String name = jp.getCurrentName();
                     if ("search_metadata".equals(name)) {
-                        jp.nextToken();//start object search_metadata
+                        //start object search_metadata
+                        jp.nextToken();
 
                         while (jp.nextToken() != JsonToken.END_OBJECT) {
                             String metaName = jp.getCurrentName();
@@ -124,7 +125,6 @@ public class SharesFunction extends AbstractJiraFunctionProvider {
             } finally {
                 jp.close();
             }
-
         } while (searchUrl != null);
 
         return count;
